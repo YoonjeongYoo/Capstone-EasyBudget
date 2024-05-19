@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20.0),
+            SizedBox(height: 10.0),
             // Password 입력 필드
             TextFormField(
               obscureText: true,
@@ -46,13 +46,13 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                    onPressed: (){},
-                    child: Text(
-                      '아이디 찾기',
-                      style: TextStyle(
-                        color: Colors.black54,
-                      ),
+                  onPressed: (){},
+                  child: Text(
+                    '아이디 찾기',
+                    style: TextStyle(
+                      color: Colors.black54,
                     ),
+                  ),
                 ),
                 Text(' | '),
                 TextButton(
@@ -80,12 +80,22 @@ class LoginScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: blueColor,
                 foregroundColor: primaryColor,
-                textStyle: TextStyle(
-
+                textStyle: TextStyle(),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                ),
+                padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
+              ),
+              child: Text(
+                '로그인',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR'
                 ),
               ),
-              child: Text('로그인'),
             ),
+            SizedBox(height: 5,),
             OutlinedButton(
               onPressed: () {
                 // 회원가입 버튼을 눌렀을 때의 동작 추가
@@ -100,10 +110,20 @@ class LoginScreen extends StatelessWidget {
                 backgroundColor: primaryColor,
                 foregroundColor: blueColor,
                 side: BorderSide(color: blueColor),
-                textStyle: TextStyle(
+                textStyle: TextStyle(),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                ),
+                padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
+              ),
+              child: Text(
+                '회원가입',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR'
                 ),
               ),
-              child: Text('회원가입'),
             ),
           ],
         ),
