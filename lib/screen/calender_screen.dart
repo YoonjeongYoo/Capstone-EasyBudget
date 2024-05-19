@@ -16,7 +16,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
-// 여기에 예시 데이터와 함수
+
+  // 여기에 예시 데이터와 함수
   Map<DateTime, int> expenses = {
     DateTime(2024, 5, 20): 50000, // 2024년 5월 20일의 지출
     DateTime(2024, 6, 20): 50000,

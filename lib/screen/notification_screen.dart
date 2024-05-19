@@ -23,7 +23,7 @@ class NotificationScreen extends StatelessWidget {
             _NotificationContainer_category(category: '식비',),
             _NotificationContainer_name(name: '이은수',),
             Divider(
-              color: Colors.black26,
+              color: Color(0xffe9ecef),
             ),
             // 다른 알림 위젯들 추가
           ],
@@ -49,7 +49,7 @@ class _NotificationContainer_name extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: Colors.black26), // 위쪽 테두리
+          top: BorderSide(color: Color(0xffe9ecef)), // 위쪽 테두리
         ),
       ),
       child: Row(
@@ -86,7 +86,7 @@ class _NotificationContainer_category extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: Colors.black26), // 위쪽 테두리
+          top: BorderSide(color: Color(0xffe9ecef)), // 위쪽 테두리
         ),
       ),
       child: Row(

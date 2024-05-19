@@ -1,10 +1,13 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/screen/chart_screen.dart';
 import 'package:easybudget/screen/mainhome_screen.dart';
+import 'package:easybudget/screen/member_management_screen.dart';
+import 'package:easybudget/screen/space_setting_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
+import '../screen/approval_management_screen.dart';
 import '../screen/calender_screen.dart';
 
 class TabView extends StatefulWidget {
@@ -200,7 +203,67 @@ class MenuDialog extends StatelessWidget {
       actions: [
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
+            // 초대 클릭 시 다이얼로그 창
+            showCupertinoDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CupertinoAlertDialog(
+                  title: Text("공유하기"),
+                  content: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 5
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: (){},
+                          icon: Icon(CupertinoIcons.chat_bubble_fill),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(Color(0xffFEE500)),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              CircleBorder(),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: (){},
+                          icon: Icon(CupertinoIcons.envelope_fill, color: primaryColor,),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(Colors.teal),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              CircleBorder(),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: (){},
+                          icon: Icon(CupertinoIcons.link),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              CircleBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    CupertinoDialogAction(
+                      child: Text(
+                        "취소",
+                        style: TextStyle(color: blueColor),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
           },
           child: Text(
             '초대',
@@ -209,7 +272,13 @@ class MenuDialog extends StatelessWidget {
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
+            // 스페이스 참여 승인 관리 클릭 시 이벤트
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ApprovalManagementScreen(), // 수정
+              ),
+            );
           },
           child: Text(
             '스페이스 참여 승인 관리',
@@ -218,7 +287,13 @@ class MenuDialog extends StatelessWidget {
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
+            // 스페이스 멤버 관리 클릭 시 이벤트
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MemberManagementScreen(), // 수정
+              ),
+            );
           },
           child: Text(
             '스페이스 멤버 관리',
@@ -227,7 +302,13 @@ class MenuDialog extends StatelessWidget {
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
+            // 스페이스 세부 설정 클릭 시 이벤트
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SpaceSettingScreen(), // 수정
+              ),
+            );
           },
           child: Text(
             '스페이스 세부 설정',
