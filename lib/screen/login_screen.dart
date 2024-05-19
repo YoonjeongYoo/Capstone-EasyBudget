@@ -111,7 +111,11 @@ class LoginScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: blueColor,
                 foregroundColor: primaryColor,
-                textStyle: TextStyle(),
+                textStyle: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR'
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
                 ),
@@ -119,11 +123,6 @@ class LoginScreen extends StatelessWidget {
               ),
               child: Text(
                 '로그인',
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR'
-                ),
               ),
             ),
             SizedBox(height: 5,),
@@ -141,7 +140,11 @@ class LoginScreen extends StatelessWidget {
                 backgroundColor: primaryColor,
                 foregroundColor: blueColor,
                 side: BorderSide(color: blueColor),
-                textStyle: TextStyle(),
+                textStyle: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR'
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
                 ),
@@ -149,11 +152,6 @@ class LoginScreen extends StatelessWidget {
               ),
               child: Text(
                 '회원가입',
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR'
-                ),
               ),
             ),
           ],
