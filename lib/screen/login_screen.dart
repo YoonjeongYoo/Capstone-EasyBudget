@@ -1,9 +1,13 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/screen/signin_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
+import 'package:easybudget/database/login_db.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easybudget/database/dbConnector.dart';
 
+final userIdController = TextEditingController();
+final passwordController = TextEditingController();
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -27,6 +31,7 @@ class LoginScreen extends StatelessWidget {
             ),
             // Username 입력 필드
             TextFormField(
+              controller: userIdController,
               decoration: InputDecoration(
                 labelText: '아이디 입력',
                 border: OutlineInputBorder(),
@@ -36,6 +41,7 @@ class LoginScreen extends StatelessWidget {
             // Password 입력 필드
             TextFormField(
               obscureText: true,
+              controller: passwordController,
               decoration: InputDecoration(
                 labelText: '비밀번호 입력',
                 border: OutlineInputBorder(),
@@ -69,13 +75,38 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 10.0),
             // 로그인 버튼
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SpaceManagementScreen(), // 수정
-                  ),
+              onPressed: () async {
+                final loginCheck = await login(
+                  userIdController.text, passwordController.text
                 );
+                print(loginCheck);
+                if (loginCheck == '-1') {
+                  print('failed to login');
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Text('아이디 또는 비밀번호가 올바르지 않습니다!'),
+                        actions: [
+                          TextButton(
+                            child: Text('닫기'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    }
+                  );
+                } else {
+                  print('로그인 성공');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SpaceManagementScreen(), // 수정
+                    ),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: blueColor,
