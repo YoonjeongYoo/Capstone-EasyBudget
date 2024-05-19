@@ -43,6 +43,7 @@ dependencies:
   path: ^1.9.0
   get_it: ^7.6.7
   mysql1: ^0.20.0
+  fl_chart: ^0.68.0
 
 dev_dependencies:
   flutter_test:
