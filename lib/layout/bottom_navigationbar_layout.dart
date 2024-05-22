@@ -1,7 +1,10 @@
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/screen/budget_detail_screen.dart';
 import 'package:easybudget/screen/chart_screen.dart';
+import 'package:easybudget/screen/expense_detail_screen.dart';
 import 'package:easybudget/screen/mainhome_screen.dart';
 import 'package:easybudget/screen/member_management_screen.dart';
+import 'package:easybudget/screen/receipt_verifying_screen.dart';
 import 'package:easybudget/screen/space_setting_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -173,7 +176,17 @@ class ScanDialog extends StatelessWidget {
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => /*ExpenseDetailsScreen(expense: {
+                  'category' : '식비',
+                  'item' : '불고기 덮밥',
+                  'amount' : '10000'
+                },), // 수정*/
+                ReceiptverificationScreen(),
+              ),
+            );
           },
           child: Text(
             '수기로 작성',
