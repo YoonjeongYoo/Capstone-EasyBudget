@@ -1,5 +1,6 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
+import 'package:easybudget/screen/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class MypageScreen extends StatelessWidget {
@@ -54,6 +55,12 @@ class MypageScreen extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 // 로그아웃 이벤트
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(), // 수정
+                  ),
+                );
               },
               child: _buildMenuItem(context, '로그아웃'),
             ),

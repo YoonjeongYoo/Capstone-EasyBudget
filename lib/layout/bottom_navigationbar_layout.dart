@@ -1,12 +1,15 @@
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/screen/chart_screen.dart';
 import 'package:easybudget/screen/mainhome_screen.dart';
 import 'package:easybudget/screen/member_management_screen.dart';
 import 'package:easybudget/screen/space_setting_screen.dart';
+import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
+import '../database/space_management_db.dart';
+import '../screen/login_screen.dart';
 import '../screen/approval_management_screen.dart';
 import '../screen/calender_screen.dart';
 
@@ -270,51 +273,54 @@ class MenuDialog extends StatelessWidget {
             style: TextStyle(color: blueColor),
           ),
         ),
-        CupertinoActionSheetAction(
-          onPressed: () {
-            // 스페이스 참여 승인 관리 클릭 시 이벤트
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ApprovalManagementScreen(), // 수정
-              ),
-            );
-          },
-          child: Text(
-            '스페이스 참여 승인 관리',
-            style: TextStyle(color: blueColor),
+        if(authorityCheck('$getUserId()', '11aa') == 1)
+          CupertinoActionSheetAction(
+            onPressed: () {
+              // 스페이스 참여 승인 관리 클릭 시 이벤트
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ApprovalManagementScreen(), // 수정
+                ),
+              );
+            },
+            child: Text(
+              '스페이스 참여 승인 관리',
+              style: TextStyle(color: blueColor),
+            ),
           ),
-        ),
-        CupertinoActionSheetAction(
-          onPressed: () {
-            // 스페이스 멤버 관리 클릭 시 이벤트
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MemberManagementScreen(), // 수정
-              ),
-            );
-          },
-          child: Text(
-            '스페이스 멤버 관리',
-            style: TextStyle(color: blueColor),
+        if(authorityCheck('$getUserId()', '11aa') == 1)
+          CupertinoActionSheetAction(
+            onPressed: () {
+              // 스페이스 멤버 관리 클릭 시 이벤트
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MemberManagementScreen(), // 수정
+                ),
+              );
+            },
+            child: Text(
+              '스페이스 멤버 관리',
+              style: TextStyle(color: blueColor),
+            ),
           ),
-        ),
-        CupertinoActionSheetAction(
-          onPressed: () {
-            // 스페이스 세부 설정 클릭 시 이벤트
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SpaceSettingScreen(), // 수정
-              ),
-            );
-          },
-          child: Text(
-            '스페이스 세부 설정',
-            style: TextStyle(color: blueColor),
+        if(authorityCheck('$getUserId()', '11aa') == 1)
+          CupertinoActionSheetAction(
+            onPressed: () {
+              // 스페이스 세부 설정 클릭 시 이벤트
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SpaceSettingScreen(), // 수정
+                ),
+              );
+            },
+            child: Text(
+              '스페이스 세부 설정',
+              style: TextStyle(color: blueColor),
+            ),
           ),
-        ),
       ],
       cancelButton: CupertinoActionSheetAction(
         onPressed: () {

@@ -1,10 +1,13 @@
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/database/find_db.dart';
 import 'package:easybudget/screen/signin_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
 import 'package:easybudget/database/login_db.dart';
+import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easybudget/database/dbConnector.dart';
+
+import '../database/space_management_db.dart';
 
 final userIdController = TextEditingController();
 final passwordController = TextEditingController();
@@ -52,7 +55,9 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: (){},
+                  onPressed: () async {
+                    final findingId = await findId('정지용');
+                  },
                   child: Text(
                     '아이디 찾기',
                     style: TextStyle(
@@ -62,7 +67,9 @@ class LoginScreen extends StatelessWidget {
                 ),
                 Text(' | '),
                 TextButton(
-                  onPressed: (){},
+                  onPressed: () async {
+                    final findingPW = await findPW('jjy1234');
+                  },
                   child: Text(
                     '비밀번호 찾기',
                     style: TextStyle(
@@ -99,7 +106,9 @@ class LoginScreen extends StatelessWidget {
                     }
                   );
                 } else {
+                  saveUserID(userIdController.text);
                   print('로그인 성공');
+                  print(authorityCheck(userIdController.text, '11aa'));
                   Navigator.push(
                     context,
                     MaterialPageRoute(

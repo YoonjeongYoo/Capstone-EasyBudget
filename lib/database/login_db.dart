@@ -1,6 +1,7 @@
 import 'package:easybudget/database/hashPassword.dart';
 import 'package:easybudget/database/dbConnector.dart';
 import 'package:mysql_client/mysql_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // 계정 생성
 Future<void> insertMember(String uid, String pw, String uname) async {
@@ -56,6 +57,28 @@ Future<String?> login(String uid, String pw) async {
   return '-1';
 }
 
+// 로그인한 유저ID 인스턴스에 저장
+Future<void> saveUserID(String uid) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('uid', uid);
+}
+
+// 인스턴스에 저장된 유저ID 찾기
+Future<String?> getUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  if (prefs.getString('uid') != null) {
+    return prefs.getString('uid') as String;
+  } else {
+    return '-1';
+  }
+}
+
+// 인스턴스에 저장된 ID 삭제
+Future<void> removeUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('uid');
+}
+
 // 유저ID 중복확인
 Future<String?> confirmIdCheck(String uid) async {
   // MySQL 접속 설정
@@ -68,7 +91,7 @@ Future<String?> confirmIdCheck(String uid) async {
   try {
     // 아이디가 중복이면 1 값 반환, 중복이 아니면 0 값 반환
     result = await conn.execute(
-        "SELECT IFNULL((SELECT uid FROM users WHERE uid=:uid), 0) as idCheck",
+        "SELECT IFNULL((SELECT uid FROM users WHERE uid=:uid), 0)",
         {"uid": uid});
 
     if (result.isNotEmpty) {
