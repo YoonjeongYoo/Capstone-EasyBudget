@@ -19,6 +19,31 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
   TextEditingController confirmParticipationCodeController = TextEditingController();
   TextEditingController tagController = TextEditingController();
   bool isApprovalRequired = false;
+  bool isParticipationCodeMatched = false;
+
+  @override
+  void initState() {
+    super.initState();
+    participationCodeController.addListener(_checkParticipationCode);
+    confirmParticipationCodeController.addListener(_checkParticipationCode);
+  }
+
+  @override
+  void dispose() {
+    spaceNameController.dispose();
+    participationCodeController.dispose();
+    confirmParticipationCodeController.dispose();
+    tagController.dispose();
+    super.dispose();
+  }
+
+  void _checkParticipationCode() {
+    setState(() {
+      isParticipationCodeMatched =
+          participationCodeController.text.isNotEmpty &&
+              participationCodeController.text == confirmParticipationCodeController.text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +52,13 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
         title: '스페이스 생성하기',
         action: [
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
-              onPressed: (){
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MypageScreen(), // 수정
+                    builder: (context) => MypageScreen(),
                   ),
                 );
               },
@@ -46,7 +69,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
         ],
       ),
       body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -216,7 +239,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                                   right: isApprovalRequired ? 0 : 30,
                                   child: Container(
                                     width: 30,
-                                    height: 30,
+                                    height: 26,
                                     decoration: BoxDecoration(
                                       color: isApprovalRequired
                                           ? Color.fromRGBO(0, 88, 246, 1)
@@ -254,11 +277,13 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: isParticipationCodeMatched
+                        ? () {
                       // 스페이스 생성 로직 추가
-                    },
+                    }
+                        : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
+                      backgroundColor: isParticipationCodeMatched ? blueColor : Colors.grey,
                       foregroundColor: primaryColor,
                       textStyle: TextStyle(
                         fontSize: 15,
