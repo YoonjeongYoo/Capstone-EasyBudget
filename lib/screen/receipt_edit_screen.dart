@@ -13,16 +13,14 @@ import 'package:easybudget/layout/totalcost_layout.dart';
 import 'package:easybudget/layout/writer_layout.dart';
 import 'package:flutter/material.dart';
 
-class ExpenseDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> expense;
-
-  const ExpenseDetailsScreen({Key? key, required this.expense}) : super(key: key);
+class ReceiptEditScreen extends StatelessWidget {
+  const ReceiptEditScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       appbar: AppbarLayout(
-        title: '상세 영수증 내역 확인',
+        title: '영수증 정보 확인',
         action: [],
       ),
       body: Padding(
@@ -38,23 +36,23 @@ class ExpenseDetailsScreen extends StatelessWidget {
                 child: _VerificationBox(),
               ),*/
               ReceiptLayout(
-                purchased: PurchasedView(perchased: '(수원) 경기대학교 구내 서점',),
-                //purchased: PurchasedEdit(existingData: '(수원) 경기대학교 구내 서점'),
-                address: AddressView(address: '경기 수원시 영통구 광교산로 154-42',),
-                //address: AddressEdit(existingData: '경기 수원시 영통구 광교산로 154-42',),
-                pdate: PdateView(pdate: '2024-05-21',),
-                //pdate: PdateEdit(existingData : '2024-03-13'),
-                category: CategoryView(category: '${expense['category']}',),
-                //category: CategoryEdit(),
-                writer: WriterView(name: '유윤정', uid: 'yyj0310',),
+                //purchased: PurchasedView(perchased: '(수원) 222경기대학교 구내 서점',),
+                purchased: PurchasedEdit(existingData: '(수원) 222경기대학교 구내 서점'),
+                //address: AddressView(address: '경기 수원시 영통구 광교산로 154-42',),
+                address: AddressEdit(existingData: '경기 수원시 영통구 광교산로 154-42',),
+                //pdate: PdateView(pdate: '2024-03-13',),
+                pdate: PdateEdit(existingData : '2024-03-13'),
+                //category: CategoryView(category: '식비',),
+                category: CategoryEdit(),
                 //writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                pname: PnameView(pname: '${expense['item']}',),
-                //pname: PnameEdit(existingData: '운영체제 10판',),
-                amount: AmountView(amount: '1',),
-                //amount: AmountEdit(existingData: '1',),
-                cost: CostView(cost: '${expense['amount']}',),
-                //cost: CostEdit(existingData: '39,000',),
-                totalcost: TotalCostView(totalcost: '${expense['amount']}',),
+                writer: WriterView(name: '유윤정', uid: 'yyj0310',),
+                //pname: PnameView(pname: '운영체제 10판',),
+                pname: PnameEdit(existingData: '운영체제 10판',),
+                //amount: AmountView(amount: '1',),
+                amount: AmountEdit(existingData: '1',),
+                //cost: CostView(cost: '39,000',),
+                cost: CostEdit(existingData: '39,000',),
+                totalcost: TotalCostView(totalcost: '39,000',),
                 //totalcost: TotalCostView(totalcost: null ),
               ),
               SizedBox(height: 20,),

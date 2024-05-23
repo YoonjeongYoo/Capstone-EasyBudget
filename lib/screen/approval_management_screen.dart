@@ -16,9 +16,9 @@ class ApprovalManagementScreen extends StatelessWidget {
       body: SingleChildScrollView( // 2. SingleChildScrollView 추가
         child: Column(
           children: [
-            _RequestContainer(name: '김효영', uid: 'khy1234',),
-            _RequestContainer(name: '이하빈', uid: 'lhb123',),
-            _RequestContainer(name: '이은수', uid: 'les456',),
+            _RequestContainer(name: '김효영', uid: 'khy1234', profile: 'asset/img/profile_img_2.png',),
+            _RequestContainer(name: '이하빈', uid: 'lhb123', profile: 'asset/img/profile_img_2.png',),
+            _RequestContainer(name: '이은수', uid: 'les456', profile: 'asset/img/profile_img_2.png',),
             Divider(
               color: Color(0xffe9ecef),
             ),
@@ -34,7 +34,8 @@ class ApprovalManagementScreen extends StatelessWidget {
 class _RequestContainer extends StatelessWidget {
   final String name;
   final String uid;
-  const _RequestContainer({super.key, required this.name, required this.uid});
+  final String profile;
+  const _RequestContainer({super.key, required this.name, required this.uid, required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,7 @@ class _RequestContainer extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: AssetImage('asset/img/profile_img.jpg'),
+                backgroundImage: AssetImage(profile),
               ),
               SizedBox(width: 20,),
               Text(
