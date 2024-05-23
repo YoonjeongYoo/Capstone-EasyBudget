@@ -1,3 +1,4 @@
+import 'package:easybudget/layout/receipt_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -63,17 +64,23 @@ class ReceiptverificationScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 0.1,
+          horizontal: 20,
+          vertical: 10,
         ),
-        child: Column(
-          children: [
-            SizedBox(height: 10,),
-            Flexible(
-              fit: FlexFit.tight,
-              child: _VerificationBox(),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              /*Flexible(
+                fit: FlexFit.tight,
+                child: _VerificationBox(),
+              ),*/
+              ReceiptLayout(
+                purchased: PurchasedView(perchased: '(수원) 222경기대학교 구내 서점',),
+                //address: AddressView(address: '경기 수원시 영통구 광교산로 154-42',),
+                address: AddressEdit(existingData: null,),
+              ),
+            ],
+          ),
         ),
       ),
     );
