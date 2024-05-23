@@ -47,6 +47,7 @@ dependencies:
   sqflite: ^2.3.3+1
   fl_chart: ^0.68.0
   getwidget: ^4.0.0
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:

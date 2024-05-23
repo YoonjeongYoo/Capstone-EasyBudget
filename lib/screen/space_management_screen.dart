@@ -54,12 +54,6 @@ class SpaceManagementScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _SpaceContainer(name: '경기대학교 학생회',),
-                    _SpaceContainer(name: '경기대학교 학생회',),
-                    _SpaceContainer(name: '경기대학교 학생회',),
-                    _SpaceContainer(name: '경기대학교 학생회',),
-                    _SpaceContainer(name: '경기대학교 학생회',),
-                    _SpaceContainer(name: '경기대학교 학생회',),
-                    _SpaceContainer(name: '경기대학교 학생회',),
                   ],
                 ),
               ),

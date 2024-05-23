@@ -4,26 +4,26 @@ import 'package:flutter/material.dart';
 class ReceiptLayout extends StatelessWidget {
   final Widget purchased;
   final Widget address;
-  /*final Widget pdate;
+  final Widget pdate;
   final Widget category;
   final Widget pname;
   final Widget amount;
   final Widget cost;
   final Widget totalcost;
-  final Widget writer;*/
+  final Widget writer;
 
 
   const ReceiptLayout({
     super.key,
     required this.purchased,
     required this.address,
-    /*required this.pdate,
+    required this.pdate,
     required this.category,
     required this.pname,
     required this.amount,
     required this.cost,
     required this.totalcost,
-    required this.writer,*/
+    required this.writer,
   });
 
   @override
@@ -107,7 +107,7 @@ class ReceiptLayout extends StatelessWidget {
                       fontFamily: 'NotoSansKR',
                     ),
                   ),
-                  //pdate,
+                  pdate,
                 ],
               ),
             ),
@@ -127,7 +127,7 @@ class ReceiptLayout extends StatelessWidget {
                       fontFamily: 'NotoSansKR',
                     ),
                   ),
-                  //category,
+                  category,
                 ],
               ),
             ),
@@ -147,7 +147,7 @@ class ReceiptLayout extends StatelessWidget {
                       fontFamily: 'NotoSansKR',
                     ),
                   ),
-                  //writer,
+                  writer,
                 ],
               ),
             ),
@@ -192,9 +192,9 @@ class ReceiptLayout extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  //pname,
-                  //amount,
-                  //cost,
+                  pname,
+                  amount,
+                  cost,
                 ],
               ),
             ),
@@ -217,7 +217,7 @@ class ReceiptLayout extends StatelessWidget {
                       fontFamily: 'NotoSansKR',
                     ),
                   ),
-                  //totalcost,
+                  totalcost,
                 ],
               ),
             ),
@@ -227,105 +227,3 @@ class ReceiptLayout extends StatelessWidget {
     );
   }
 }
-
-
-class PurchasedView extends StatelessWidget {
-  final String perchased;
-
-  const PurchasedView({super.key, required this.perchased});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      '$perchased',
-      style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          fontFamily: 'NotoSansKR',
-          color: Colors.black54
-      ),
-    );
-  }
-}
-
-class PurchasedEdit extends StatelessWidget {
-  final String? existingData;
-
-  const PurchasedEdit({super.key, this.existingData});
-
-  @override
-  Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController(
-      text: existingData,
-    );
-
-    return TextField(
-      controller: _controller,
-      decoration: InputDecoration(
-        labelText: '구매처',
-        hintText: existingData == null || existingData!.isEmpty
-            ? '구매처를 입력하세요'
-            : '',
-        border: OutlineInputBorder(),
-      ),
-    );
-  }
-}
-
-class AddressView extends StatelessWidget {
-  final String address;
-
-  const AddressView({super.key, required this.address,});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      '$address',
-      style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          fontFamily: 'NotoSansKR',
-          color: Colors.black54
-      ),
-    );
-  }
-}
-
-class AddressEdit extends StatelessWidget {
-  final String? existingData;
-
-  const AddressEdit({super.key, this.existingData});
-
-  @override
-  Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController(
-      text: existingData,
-    );
-
-    return Container(
-      width: 200,
-      height: 50,
-      child: TextField(
-        controller: _controller,
-        decoration: InputDecoration(
-          labelText: '주소',
-          hintText: existingData == null || existingData!.isEmpty
-              ? '주소를 입력하세요'
-              : '',
-          border: OutlineInputBorder(),
-        ),
-      ),
-    );
-  }
-}
-
-
-/*
-final Widget address;
-final Widget pdate;
-final Widget category;
-final Widget pname;
-final Widget amount;
-final Widget cost;
-final Widget totalcost;
-final Widget writer;*/

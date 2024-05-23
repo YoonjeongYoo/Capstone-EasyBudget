@@ -19,9 +19,9 @@ class MemberManagementScreen extends StatelessWidget {
       body: SingleChildScrollView( // 2. SingleChildScrollView 추가
         child: Column(
           children: [
-            _MemberContainer(name: '유윤정', uid: 'yyj0310', sid: '11aa', authority: 2,),
-            _MemberContainer(name: '정지용', uid: 'jjy1234', sid: '11aa', authority: 1,),
-            _MemberContainer(name: '조참솔', uid: 'ccs4321', sid: '11aa', authority: 3,),
+            _MemberContainer(name: '유윤정', uid: 'yyj0310', sid: '11aa', authority: 2, profile: 'asset/img/profile_img.jpg',),
+            _MemberContainer(name: '정지용', uid: 'jjy1234', sid: '11aa', authority: 1, profile: 'asset/img/profile_img_2.png',),
+            _MemberContainer(name: '조참솔', uid: 'ccs4321', sid: '11aa', authority: 3, profile: 'asset/img/profile_img_1.png',),
             Divider(
               color: Color(0xffe9ecef),
             ),
@@ -38,8 +38,9 @@ class _MemberContainer extends StatefulWidget {
   final String name;
   final String uid;
   final String sid;
+  final String profile;
   int authority;
-  _MemberContainer({Key? key, required this.name, required this.uid, required this.sid, required this.authority});
+  _MemberContainer({Key? key, required this.name, required this.uid, required this.sid, required this.authority, required this.profile});
 
   @override
   _MemberContainerState createState() => _MemberContainerState();
@@ -139,7 +140,7 @@ class _MemberContainerState extends State<_MemberContainer> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: AssetImage('asset/img/profile_img.jpg'),
+                backgroundImage: AssetImage(widget.profile),
               ),
               SizedBox(width: 20),
               Row(

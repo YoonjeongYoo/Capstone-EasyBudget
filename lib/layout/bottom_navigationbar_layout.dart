@@ -3,6 +3,8 @@ import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/screen/chart_screen.dart';
 import 'package:easybudget/screen/mainhome_screen.dart';
 import 'package:easybudget/screen/member_management_screen.dart';
+import 'package:easybudget/screen/receipt_input_screen.dart';
+import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:easybudget/screen/space_setting_screen.dart';
 import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
@@ -159,6 +161,12 @@ class ScanDialog extends StatelessWidget {
         CupertinoActionSheetAction(
           onPressed: () {
             // Add your action here
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ReceiptScanComfirmScreen(), // 수정
+              ),
+            );
           },
           child: Text(
             '영수증 사진 스캔',
@@ -176,7 +184,13 @@ class ScanDialog extends StatelessWidget {
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
+            // 수기로 작성 클릭 시
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ReceiptScanComfirmScreen(), // 수정
+              ),
+            );
           },
           child: Text(
             '수기로 작성',
@@ -273,7 +287,7 @@ class MenuDialog extends StatelessWidget {
             style: TextStyle(color: blueColor),
           ),
         ),
-        if(authorityCheck('$getUserId()', '11aa') == 1)
+        //if(authorityCheck('$getUserId()', '11aa') == 1)
           CupertinoActionSheetAction(
             onPressed: () {
               // 스페이스 참여 승인 관리 클릭 시 이벤트
@@ -289,7 +303,7 @@ class MenuDialog extends StatelessWidget {
               style: TextStyle(color: blueColor),
             ),
           ),
-        if(authorityCheck('$getUserId()', '11aa') == 1)
+        //if(authorityCheck('$getUserId()', '11aa') == 1)
           CupertinoActionSheetAction(
             onPressed: () {
               // 스페이스 멤버 관리 클릭 시 이벤트
@@ -305,7 +319,7 @@ class MenuDialog extends StatelessWidget {
               style: TextStyle(color: blueColor),
             ),
           ),
-        if(authorityCheck('$getUserId()', '11aa') == 1)
+        //if(authorityCheck('$getUserId()', '11aa') == 1)
           CupertinoActionSheetAction(
             onPressed: () {
               // 스페이스 세부 설정 클릭 시 이벤트
