@@ -5,6 +5,7 @@ import 'package:easybudget/screen/space_management_screen.dart';
 import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easybudget/screen/search_password.dart';
 import 'package:flutter/material.dart';
 
 import '../database/space_management_db.dart';
@@ -68,7 +69,12 @@ class LoginScreen extends StatelessWidget {
                 Text(' | '),
                 TextButton(
                   onPressed: () async {
-                    final findingPW = await findPW('jjy1234');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:(context)=> PasswordResetScreen(),
+                      )
+                    );
                   },
                   child: Text(
                     '비밀번호 찾기',
