@@ -188,7 +188,7 @@ class ScanDialog extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ReceiptScanComfirmScreen(), // 수정
+                builder: (context) => ReceiptInputScreen(), // 수정
               ),
             );
           },

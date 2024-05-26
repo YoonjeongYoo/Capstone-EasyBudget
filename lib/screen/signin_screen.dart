@@ -36,9 +36,9 @@ class SigninForm extends StatefulWidget {
 class _SigninFormState extends State<SigninForm> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-  TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _PhonenumController = TextEditingController();
 
   bool _isIdChecked = false;
 
@@ -153,6 +153,11 @@ class _SigninFormState extends State<SigninForm> {
             controller: _nameController,
             decoration: InputDecoration(labelText: '이름'),
           ),
+          SizedBox(height: 20),
+          TextField(
+            controller: _PhonenumController,
+            decoration: InputDecoration(labelText: '휴대폰 번호'),
+          ),
           SizedBox(height: 100),
           ElevatedButton(
             onPressed: _showSignupCompleteDialog,
@@ -182,6 +187,7 @@ class _SigninFormState extends State<SigninForm> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _nameController.dispose();
+    _PhonenumController.dispose();
     super.dispose();
   }
 }
