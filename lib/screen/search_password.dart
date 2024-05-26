@@ -1,24 +1,9 @@
+import 'package:easybudget/layout/appbar_layout.dart';
+import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../constant/color.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Password Reset',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: PasswordResetScreen(),
-    );
-  }
-}
 
 class PasswordResetScreen extends StatefulWidget {
   @override
@@ -80,103 +65,106 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('비밀번호 찾기'),
+    return DefaultLayout(
+      appbar: AppbarLayout(
+        title: '비밀번호 찾기',
+        action: [],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(height: 16.0),
-            TextField(
-              decoration: InputDecoration(
-                labelText: '아이디',
-                border: OutlineInputBorder(),
-                hintText: '아이디를 입력해 주세요.',
-              ),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              decoration: InputDecoration(
-                labelText: '이름',
-                border: OutlineInputBorder(),
-                hintText: '이름을 입력해 주세요.',
-              ),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: '전화번호',
-                border: OutlineInputBorder(),
-                hintText: '전화번호를 입력해 주세요.',
-              ),
-              keyboardType: TextInputType.phone,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _codeController,
-              decoration: InputDecoration(
-                labelText: '인증코드',
-                border: OutlineInputBorder(),
-                hintText: '인증코드를 입력해 주세요.',
-              ),
-            ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _isSendCodeButtonEnabled
-                    ? () {
-                  // 인증번호 전송 로직 추가
-                }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  foregroundColor: blueColor,
-                  textStyle: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR',
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 16.0),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: '아이디',
+                  border: OutlineInputBorder(),
+                  hintText: '아이디를 입력해 주세요.',
                 ),
-                child: Text('인증번호 전송'),
               ),
-            ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _isNextButtonEnabled
-                    ? () {
-                  // 다음 버튼 로직 추가
-                }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: blueColor,
-                  foregroundColor: primaryColor,
-                  textStyle: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR',
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15),
+              SizedBox(height: 16.0),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: '이름',
+                  border: OutlineInputBorder(),
+                  hintText: '이름을 입력해 주세요.',
                 ),
-                child: Text('다음'),
               ),
-            ),
-          ],
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _phoneController,
+                decoration: InputDecoration(
+                  labelText: '전화번호',
+                  border: OutlineInputBorder(),
+                  hintText: '전화번호를 입력해 주세요.',
+                ),
+                keyboardType: TextInputType.phone,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _codeController,
+                decoration: InputDecoration(
+                  labelText: '인증코드',
+                  border: OutlineInputBorder(),
+                  hintText: '인증코드를 입력해 주세요.',
+                ),
+              ),
+              SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _isSendCodeButtonEnabled
+                      ? () {
+                    // 인증번호 전송 로직 추가
+                  }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: blueColor,
+                    textStyle: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'NotoSansKR',
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Text('인증번호 전송'),
+                ),
+              ),
+              SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _isNextButtonEnabled
+                      ? () {
+                    // 다음 버튼 로직 추가
+                  }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: blueColor,
+                    foregroundColor: primaryColor,
+                    textStyle: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'NotoSansKR',
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Text('다음'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

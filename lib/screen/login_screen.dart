@@ -1,5 +1,6 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/database/find_db.dart';
+import 'package:easybudget/screen/search_ID.dart';
 import 'package:easybudget/screen/signin_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
 import 'package:easybudget/database/login_db.dart';
@@ -58,6 +59,12 @@ class LoginScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     final findingId = await findId('정지용');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:(context)=> FindIdScreen(),
+                        )
+                    );
                   },
                   child: Text(
                     '아이디 찾기',
