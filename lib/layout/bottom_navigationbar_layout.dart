@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/screen/chart_screen.dart';
@@ -9,6 +11,7 @@ import 'package:easybudget/screen/space_setting_screen.dart';
 import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import "package:image_picker/image_picker.dart";
 
 import '../database/space_management_db.dart';
 import '../screen/login_screen.dart';
@@ -151,8 +154,33 @@ const _navItems = [
   ),
 ];
 
-class ScanDialog extends StatelessWidget {
+class ScanDialog extends StatefulWidget {
   const ScanDialog({Key? key}) : super(key: key);
+
+  @override
+  State<ScanDialog> createState() => _ScanDialogState();
+}
+
+class _ScanDialogState extends State<ScanDialog> {
+  XFile? _image;
+ //이미지를 담을 변수 선언
+  final ImagePicker picker = ImagePicker();
+ //ImagePicker 초기화
+  Future getImage(ImageSource imageSource) async {
+    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
+    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    if (pickedFile != null) {
+      /*setState(() {
+        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+      });*/
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ImageDisplayScreen(imageFile: pickedFile),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,12 +189,13 @@ class ScanDialog extends StatelessWidget {
         CupertinoActionSheetAction(
           onPressed: () {
             // Add your action here
-            Navigator.push(
+            /*Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ReceiptScanComfirmScreen(), // 수정
               ),
-            );
+            );*/
+            getImage(ImageSource.camera);
           },
           child: Text(
             '영수증 사진 스캔',
@@ -175,7 +204,7 @@ class ScanDialog extends StatelessWidget {
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
+            getImage(ImageSource.gallery);
           },
           child: Text(
             '앨범에서 선택',
@@ -210,6 +239,28 @@ class ScanDialog extends StatelessWidget {
     );
   }
 }
+
+class ImageDisplayScreen extends StatelessWidget {
+  final XFile imageFile;
+
+  const ImageDisplayScreen({Key? key, required this.imageFile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('이미지 보기'),
+      ),
+      body: Center(
+        child: Image.file(
+          File(imageFile.path),
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+}
+
 
 class MenuDialog extends StatelessWidget {
   const MenuDialog({Key? key}) : super(key: key);
