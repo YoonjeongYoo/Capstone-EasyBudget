@@ -48,6 +48,8 @@ dependencies:
   fl_chart: ^0.68.0
   getwidget: ^4.0.0
   shared_preferences: ^2.2.3
+  firebase_core: ^2.31.1
+  cloud_firestore: ^4.17.4
 
 dev_dependencies:
   flutter_test:

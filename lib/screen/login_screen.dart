@@ -1,13 +1,15 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/database/find_db.dart';
+import 'package:easybudget/firebase/signup_db.dart';
 import 'package:easybudget/screen/search_ID.dart';
 import 'package:easybudget/screen/signin_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
-import 'package:easybudget/database/login_db.dart';
+import 'package:easybudget/firebase/login_db.dart';
 import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easybudget/screen/search_password.dart';
 import 'package:flutter/material.dart';
+import '../firebase/search_db.dart';
 
 import '../database/space_management_db.dart';
 
@@ -96,11 +98,20 @@ class LoginScreen extends StatelessWidget {
             // 로그인 버튼
             ElevatedButton(
               onPressed: () async {
-                final loginCheck = await login(
+                saveUserID(userIdController.text);
+                searchData();
+                //signUp('lee', '1212', 'eunsu', '01011112222');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SpaceManagementScreen(), // 수정
+                  ),
+                );
+                /*final loginCheck = await login(
                   userIdController.text, passwordController.text
                 );
-                print(loginCheck);
-                if (loginCheck == '-1') {
+                print(loginCheck);*/
+                /*if (loginCheck == '-1') {
                   print('failed to login');
                   showDialog(
                     context: context,
@@ -128,7 +139,7 @@ class LoginScreen extends StatelessWidget {
                       builder: (context) => SpaceManagementScreen(), // 수정
                     ),
                   );
-                }
+                }*/
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: blueColor,
