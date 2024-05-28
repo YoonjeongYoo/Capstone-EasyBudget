@@ -99,14 +99,33 @@ class LoginScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 saveUserID(userIdController.text);
-                searchData();
-                //signUp('lee', '1212', 'eunsu', '01011112222');
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SpaceManagementScreen(), // 수정
-                  ),
-                );
+                if(await searchData()!='') {
+                  print(await searchData());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SpaceManagementScreen(), // 수정
+                    ),
+                  );
+                } else {
+                  print('failed to login');
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text('아이디 또는 비밀번호가 올바르지 않습니다!'),
+                          actions: [
+                            TextButton(
+                              child: Text('닫기'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      }
+                  );
+                }
                 /*final loginCheck = await login(
                   userIdController.text, passwordController.text
                 );

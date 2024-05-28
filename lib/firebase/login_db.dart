@@ -8,10 +8,15 @@ Future<void> saveUserID(String uid) async {
 
 Future<String?> getUserId() async {
   final prefs = await SharedPreferences.getInstance();
+
   if (prefs.getString('uid') != null) {
-    final res = prefs.getString('uid');
-    return res;
+    return prefs.getString('uid');
   } else {
     return '-1';
   }
+}
+
+Future<void> removeUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('uid');
 }
