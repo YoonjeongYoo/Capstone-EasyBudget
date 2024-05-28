@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:easybudget/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:easybudget/screen/category_display_widget.dart';
+import 'package:easybudget/screen/calender_screen.dart';
+import 'firebase_options.dart';
+
 
 void main() async{
   initializeDateFormatting();
@@ -38,7 +42,8 @@ void main() async{
         ),
       ),
       //home: TabView(),
-      home: LogoScreen(),
+      //home: LogoScreen(),
+      home: CategoryDisplayWidget(),
     ),
   );
 }
