@@ -1,7 +1,6 @@
 import 'dart:js_interop';
 
 import 'package:easybudget/constant/color.dart';
-import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/firebase/search_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
@@ -190,7 +189,7 @@ class _SigninFormState extends State<SigninForm> {
               } finally {
                 print('successfully signed up');
               }
-              _showSignupCompleteDialog;
+              _showSignupCompleteDialog();
             },
             child: Text('가입하기'),
             style: ElevatedButton.styleFrom(

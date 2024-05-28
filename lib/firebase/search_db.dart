@@ -62,3 +62,33 @@ Future<String?> checkData(String uid) async {
   }
   return docid;
 }
+
+Future<bool> verifyLoginCredentials(String userId, String password) async {
+  final db = FirebaseFirestore.instance;
+  bool loginSuccess = false;
+
+  try {
+    final querySnapshot = await db.collection("User")
+        .where("uid", isEqualTo: userId)
+        .where("pw", isEqualTo: password)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // 로그인 성공
+      loginSuccess = true;
+      print('로그인 성공');
+      for (var doc in querySnapshot.docs) {
+        print('Document ID: ${doc.id}');
+        print('Document Data: ${doc.data()}');
+      }
+    } else {
+      // 로그인 실패
+      print('로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다. $password');
+    }
+  } catch (e) {
+    print('로그인 중 오류 발생: $e');
+  }
+
+  return loginSuccess;
+}
+
