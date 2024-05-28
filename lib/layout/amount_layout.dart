@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AmountView extends StatelessWidget {
-  final String amount;
+  final String? amount;
 
   const AmountView({super.key, required this.amount,});
 
