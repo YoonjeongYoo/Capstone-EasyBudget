@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "563987083764",
+    "project_id": "test0527-a1579",
+    "storage_bucket": "test0527-a1579.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563987083764:android:d696de4c7fa2ee88e809a1",
+        "android_client_info": {
+          "package_name": "com.example.easybudget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIGXz5KK_oiqEGSvuWrzThihzxwG41nWg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

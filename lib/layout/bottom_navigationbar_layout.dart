@@ -86,7 +86,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
-        children: const [
+        children:  [
           MainhomeScreen(),
           ChartScreen(),
           SizedBox(), // Placeholder for Scan Dialog

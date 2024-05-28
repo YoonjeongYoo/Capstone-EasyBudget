@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:easybudget/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:easybudget/screen/category_display_widget.dart';
+import 'package:easybudget/screen/calender_screen.dart';
+import 'firebase_options.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 위젯 바인딩 초기화
@@ -42,7 +46,8 @@ void main() async {
         ),
       ),
       //home: TabView(),
-      home: LogoScreen(),
+      //home: LogoScreen(),
+      home: CategoryDisplayWidget(),
     ),
   );
 }
