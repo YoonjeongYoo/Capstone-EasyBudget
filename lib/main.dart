@@ -8,6 +8,7 @@ import 'package:easybudget/screen/category_display_widget.dart';
 import 'package:easybudget/screen/calender_screen.dart';
 import 'firebase_options.dart';
 
+
 void main() async{
   initializeDateFormatting();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);

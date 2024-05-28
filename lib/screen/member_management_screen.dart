@@ -212,7 +212,7 @@ class _MemberContainerState extends State<_MemberContainer> {
                   padding: EdgeInsets.symmetric(vertical: 10),
                 ),
                 child: Text(
-                  '거절',
+                  '탈퇴',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

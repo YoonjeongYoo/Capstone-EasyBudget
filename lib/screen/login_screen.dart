@@ -1,11 +1,15 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/database/find_db.dart';
+import 'package:easybudget/firebase/signup_db.dart';
+import 'package:easybudget/screen/search_ID.dart';
 import 'package:easybudget/screen/signin_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
-import 'package:easybudget/database/login_db.dart';
+import 'package:easybudget/firebase/login_db.dart';
 import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easybudget/screen/search_password.dart';
 import 'package:flutter/material.dart';
+import '../firebase/search_db.dart';
 
 import '../database/space_management_db.dart';
 
@@ -57,6 +61,12 @@ class LoginScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     final findingId = await findId('정지용');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:(context)=> FindIdScreen(),
+                        )
+                    );
                   },
                   child: Text(
                     '아이디 찾기',
@@ -68,7 +78,12 @@ class LoginScreen extends StatelessWidget {
                 Text(' | '),
                 TextButton(
                   onPressed: () async {
-                    final findingPW = await findPW('jjy1234');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:(context)=> PasswordResetScreen(),
+                      )
+                    );
                   },
                   child: Text(
                     '비밀번호 찾기',
@@ -83,11 +98,39 @@ class LoginScreen extends StatelessWidget {
             // 로그인 버튼
             ElevatedButton(
               onPressed: () async {
-                final loginCheck = await login(
+                saveUserID(userIdController.text);
+                if(await searchData()!='') {
+                  print(await searchData());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SpaceManagementScreen(), // 수정
+                    ),
+                  );
+                } else {
+                  print('failed to login');
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text('아이디 또는 비밀번호가 올바르지 않습니다!'),
+                          actions: [
+                            TextButton(
+                              child: Text('닫기'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      }
+                  );
+                }
+                /*final loginCheck = await login(
                   userIdController.text, passwordController.text
                 );
-                print(loginCheck);
-                if (loginCheck == '-1') {
+                print(loginCheck);*/
+                /*if (loginCheck == '-1') {
                   print('failed to login');
                   showDialog(
                     context: context,
@@ -115,7 +158,7 @@ class LoginScreen extends StatelessWidget {
                       builder: (context) => SpaceManagementScreen(), // 수정
                     ),
                   );
-                }
+                }*/
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: blueColor,

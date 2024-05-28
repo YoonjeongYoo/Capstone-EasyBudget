@@ -50,6 +50,9 @@ dependencies:
   getwidget: ^4.0.0
   shared_preferences: ^2.2.3
   cloud_firestore: ^4.17.4
+  firebase_core: ^2.31.1
+  cloud_firestore: ^4.17.4
+  image_picker: ^1.1.1
 
 dev_dependencies:
   flutter_test:

@@ -67,7 +67,7 @@ Future<void> saveUserID(String uid) async {
 Future<String?> getUserId() async {
   final prefs = await SharedPreferences.getInstance();
   if (prefs.getString('uid') != null) {
-    return prefs.getString('uid') as String;
+    return prefs.getString('uid').toString();
   } else {
     return '-1';
   }
