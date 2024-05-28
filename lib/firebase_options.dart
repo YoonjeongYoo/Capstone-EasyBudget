@@ -31,7 +31,6 @@ class DefaultFirebaseOptions {
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
@@ -86,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'ezbudget-test-3eb45.appspot.com',
     measurementId: 'G-FHRN1HMJ86',
   );
-<<<<<<< HEAD
 }
