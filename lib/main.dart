@@ -9,9 +9,13 @@ import 'package:easybudget/screen/calender_screen.dart';
 import 'firebase_options.dart';
 
 
-void main() async{
-  initializeDateFormatting();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Flutter 위젯 바인딩 초기화
+  await initializeDateFormatting(); // 날짜 형식 초기화
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  ); // Firebase 초기화
+
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,

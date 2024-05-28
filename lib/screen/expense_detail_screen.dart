@@ -5,6 +5,7 @@ import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/category_layout.dart';
 import 'package:easybudget/layout/cost_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
+import 'package:easybudget/layout/itmes_layout.dart';
 import 'package:easybudget/layout/pdate_layout.dart';
 import 'package:easybudget/layout/pname_layout.dart';
 import 'package:easybudget/layout/purchased_layout.dart';
@@ -48,11 +49,12 @@ class ExpenseDetailsScreen extends StatelessWidget {
                 //category: CategoryEdit(),
                 writer: WriterView(name: '유윤정', uid: 'yyj0310',),
                 //writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                pname: PnameView(pname: '${expense['item']}',),
+                /*pname: PnameView(pname: '${expense['item']}',),
                 //pname: PnameEdit(existingData: '운영체제 10판',),
                 amount: AmountView(amount: '1',),
                 //amount: AmountEdit(existingData: '1',),
-                cost: CostView(cost: '${expense['amount']}',),
+                cost: CostView(cost: '${expense['amount']}',),*/
+                items: ItemsView(items: [Map()],),
                 //cost: CostEdit(existingData: '39,000',),
                 totalcost: TotalCostView(totalcost: '${expense['amount']}',),
                 //totalcost: TotalCostView(totalcost: null ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddressView extends StatelessWidget {
-  final String address;
+  final String? address;
 
   const AddressView({super.key, required this.address,});
 
