@@ -1,4 +1,6 @@
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/database/find_db.dart';
+import 'package:easybudget/firebase/category_db.dart';
 import 'package:easybudget/firebase/signup_db.dart';
 import 'package:easybudget/screen/search_ID.dart';
 import 'package:easybudget/screen/signin_screen.dart';
@@ -102,6 +104,13 @@ class LoginScreen extends StatelessWidget {
                 if (loginResult) {
                   // 로그인 성공
                   print('로그인 성공');
+                saveUserID(userIdController.text);
+                String? userInfo = await searchUser();
+                if(userInfo != '') {
+                  // print(await searchUser());
+                  // print(await searchData());
+                  await appendCategory('event');
+                  print(await getCateName());
                   Navigator.push(
                     context,
                     MaterialPageRoute(
