@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:flutter/material.dart';
 
 import 'mypage_screen.dart';
 
@@ -20,6 +22,79 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
   TextEditingController tagController = TextEditingController();
   bool isApprovalRequired = false;
   bool isParticipationCodeMatched = false;
+
+  Future<void> _checkDuplicate() async {
+    String spaceName = spaceNameController.text;
+
+    if (spaceName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('스페이스명을 입력해 주세요')),
+      );
+      return;
+    }
+
+    // Firestore에서 스페이스 이름이 있는지 확인
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('Space')
+        .where('sname', isEqualTo: spaceName)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('이미 생성된 스페이스명 입니다')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('사용 가능한 스페이스명 입니다')),
+      );
+    }
+  }
+
+  Future<void> _createSpace() async {
+    String spaceName = spaceNameController.text;
+    String joinCode = participationCodeController.text;
+    String confirmJoinCode = confirmParticipationCodeController.text;
+    String tag = tagController.text;
+
+    if (spaceName.isEmpty || joinCode.isEmpty || tag.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('모든 필드를 채워주세요.')),
+      );
+      return;
+    }
+
+    if (joinCode != confirmJoinCode) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('참여코드가 일치하지 않습니다')),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('Space').add({
+        'sname': spaceName,
+        'sid': joinCode,
+        'tag': tag,
+        'approvalRequired': isApprovalRequired,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('스페이스가 성공적으로 생성되었습니다.')),
+      );
+
+      spaceNameController.clear();
+      participationCodeController.clear();
+      confirmParticipationCodeController.clear();
+      tagController.clear();
+      setState(() {
+        isApprovalRequired = false;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('스페이스 생성 중 오류가 발생했습니다.')),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -107,9 +182,10 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        // 중복 확인 로직 추가
-                      },
+                      onPressed: _checkDuplicate,
+                      // {
+                      //   // 중복 확인 로직 추가
+                      // },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Color.fromRGBO(0, 88, 246, 1),
@@ -277,11 +353,12 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ElevatedButton(
-                    onPressed: isParticipationCodeMatched
-                        ? () {
-                      // 스페이스 생성 로직 추가
-                    }
-                        : null,
+                    //onPressed: isParticipationCodeMatched
+                    onPressed: _createSpace,
+                    //     ? () {
+                    //   // 스페이스 생성 로직 추가
+                    // }
+                    //     : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isParticipationCodeMatched ? blueColor : Colors.grey,
                       foregroundColor: primaryColor,

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:easybudget/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:easybudget/screen/calender_screen.dart';
-import 'firebase_options.dart';
+// import 'package:easybudget/screen/space_management_screen.dart';
+// import 'package:easybudget/screen/create_space_screen.dart';
+// import 'package:easybudget/screen/create_space_testscreen.dart';
+// import 'firebase_options.dart';
 
 
 void main() async {
@@ -45,8 +47,9 @@ void main() async {
         ),
       ),
       //home: TabView(),
-      //home: LogoScreen(),
       home: LogoScreen(),
+      //home: SpaceManagementScreen(),
+      //  home: CreateSpaceWidget(),
     ),
   );
 }
