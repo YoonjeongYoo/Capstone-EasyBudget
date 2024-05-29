@@ -1,7 +1,6 @@
 //import 'dart:js_interop';
 
 import 'package:easybudget/constant/color.dart';
-import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/firebase/search_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';

@@ -1,5 +1,4 @@
 import 'package:easybudget/constant/color.dart';
-import 'package:easybudget/database/space_auth_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/cupertino.dart';
@@ -200,7 +199,7 @@ class _MemberContainerState extends State<_MemberContainer> {
               ElevatedButton(
                 onPressed: () {
                   // 버튼이 클릭되었을 때 수행할 작업
-                  updateAuthority(widget.authority, widget.uid, widget.sid);
+
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

@@ -14,7 +14,7 @@ Future<void> signUp(String uid, String pw, String uname, String phone) async {
       'pw': pw,
       'uname': uname,
       'phone': phone,
-      'entered': [],
+      'entered': [{'sid': "", 'auth': "",}],
     };
     await user.add(data1);
     print('Data updated!');
