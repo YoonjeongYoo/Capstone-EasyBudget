@@ -6,19 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
-
 import 'package:easybudget/constant/color.dart';
-import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/screen/chart_screen.dart';
 import 'package:easybudget/screen/mainhome_screen.dart';
 import 'package:easybudget/screen/member_management_screen.dart';
 import 'package:easybudget/screen/receipt_input_screen.dart';
 import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:easybudget/screen/space_setting_screen.dart';
-import 'package:easybudget/database/space_auth_db.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../database/space_management_db.dart';
 import '../screen/login_screen.dart';
 import '../screen/approval_management_screen.dart';
 import '../screen/calender_screen.dart';
