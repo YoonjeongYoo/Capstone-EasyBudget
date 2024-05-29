@@ -104,7 +104,7 @@ class _CalendarPageState extends State<CalendarPage> {
             } else if (expense < 0) {
               backgroundColor = Colors.blue;
             } else {
-              backgroundColor = Colors.white;
+              backgroundColor = Color(0xffffffff);
             }
 
             return Container(

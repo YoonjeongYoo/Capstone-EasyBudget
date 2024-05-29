@@ -46,9 +46,17 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
     var fetchedExpenses = querySnapshot.docs.map((doc) {
       print(doc['pdate']);
       return {
+        'id': doc.id, // 문서의 ID 추가
         'category': doc['category'],
         'item': doc['pname'],
         'amount': doc['totalcost'],
+        'store': doc['store'],
+        'address': doc['address'],
+        'pdate': doc['pdate'],
+        'writer': doc['writer'],
+        'pname': doc['pname'],
+        'amounts': doc['amount'],
+        'cost': doc['cost'],
       };
     }).toList();
 
