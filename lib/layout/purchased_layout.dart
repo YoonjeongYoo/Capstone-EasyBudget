@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PurchasedView extends StatelessWidget {
-  final String perchased;
+  final String? perchased;
 
   const PurchasedView({super.key, required this.perchased});
 

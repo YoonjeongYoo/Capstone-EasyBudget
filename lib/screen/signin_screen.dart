@@ -1,7 +1,14 @@
+//import 'dart:js_interop';
+
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/database/login_db.dart';
+import 'package:easybudget/firebase/search_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
+
+import '../firebase/signup_db.dart';
+import 'login_screen.dart';
 
 class SigninScreen extends StatelessWidget {
   const SigninScreen({super.key});
@@ -36,9 +43,9 @@ class SigninForm extends StatefulWidget {
 class _SigninFormState extends State<SigninForm> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-  TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _PhonenumController = TextEditingController();
 
   bool _isIdChecked = false;
 
@@ -83,12 +90,26 @@ class _SigninFormState extends State<SigninForm> {
     );
   }
 
-  void _checkId() {
+  void _checkId() async {
     // 여기에 아이디 중복 확인 로직을 넣으세요.
-    setState(() {
-      _isIdChecked = true;
-    });
-    _showDialog('중복확인 완료');
+    String? idCheck;
+    try {
+      idCheck = await checkData(_idController.text);
+    } catch (e) {
+      print(e);
+    } finally {
+      if (idCheck! == '') {
+        setState(() {
+          _isIdChecked = true;
+        });
+        _showDialog('중복확인 완료');
+      } else if (idCheck != '') {
+        setState(() {
+          _isIdChecked = false;
+        });
+        _showDialog('중복된 아이디입니다!');
+      }
+    }
   }
 
   @override
@@ -153,9 +174,24 @@ class _SigninFormState extends State<SigninForm> {
             controller: _nameController,
             decoration: InputDecoration(labelText: '이름'),
           ),
+          SizedBox(height: 20),
+          TextField(
+            controller: _PhonenumController,
+            decoration: InputDecoration(labelText: '휴대폰 번호'),
+          ),
           SizedBox(height: 100),
           ElevatedButton(
-            onPressed: _showSignupCompleteDialog,
+            onPressed: () {
+              try {
+                signUp(_idController.text, _passwordController.text,
+                       _nameController.text, _PhonenumController.text);
+              } catch (e) {
+                print(e);
+              } finally {
+                print('successfully signed up');
+              }
+              _showSignupCompleteDialog;
+            },
             child: Text('가입하기'),
             style: ElevatedButton.styleFrom(
               backgroundColor: blueColor,
@@ -182,6 +218,7 @@ class _SigninFormState extends State<SigninForm> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _nameController.dispose();
+    _PhonenumController.dispose();
     super.dispose();
   }
 }
