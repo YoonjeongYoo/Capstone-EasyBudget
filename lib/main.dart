@@ -42,7 +42,7 @@ void main() async{
       ),
       //home: TabView(),
       //home: LogoScreen(),
-      home: CategoryDisplayWidget(),
+      home: CalendarPage(),
     ),
   );
 }
