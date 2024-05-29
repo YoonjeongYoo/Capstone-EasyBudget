@@ -94,7 +94,7 @@ class _SigninFormState extends State<SigninForm> {
     // 여기에 아이디 중복 확인 로직을 넣으세요.
     String? idCheck;
     try {
-      idCheck = await checkData(_idController.text);
+      idCheck = await checkUserId(_idController.text);
     } catch (e) {
       print(e);
     } finally {
@@ -190,7 +190,7 @@ class _SigninFormState extends State<SigninForm> {
               } finally {
                 print('successfully signed up');
               }
-              _showSignupCompleteDialog;
+              _showSignupCompleteDialog();
             },
             child: Text('가입하기'),
             style: ElevatedButton.styleFrom(
