@@ -122,6 +122,32 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                       children: [
                         Expanded(
                           child: Text(
+                            '총 예산 설정',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '*',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TextField(
+                      controller: spaceNameController,
+                      decoration: InputDecoration(
+                        hintText: '총 예산을 입력해 주세요.',
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
                             '참여코드',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,

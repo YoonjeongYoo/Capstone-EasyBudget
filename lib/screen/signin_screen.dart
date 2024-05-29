@@ -1,4 +1,4 @@
-import 'dart:js_interop';
+//import 'dart:js_interop';
 
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/firebase/search_db.dart';

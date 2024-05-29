@@ -2,6 +2,7 @@ import 'package:easybudget/layout/address_layout.dart';
 import 'package:easybudget/layout/amount_layout.dart';
 import 'package:easybudget/layout/category_layout.dart';
 import 'package:easybudget/layout/cost_layout.dart';
+import 'package:easybudget/layout/itmes_layout.dart';
 import 'package:easybudget/layout/pdate_layout.dart';
 import 'package:easybudget/layout/pname_layout.dart';
 import 'package:easybudget/layout/purchased_layout.dart';
@@ -49,11 +50,12 @@ class ReceiptInputScreen extends StatelessWidget {
                 //writer: WriterView(name: '유윤정', uid: 'yyj0310',),
                 writer: WriterView(name: '유윤정', uid: 'yyj0310',),
                 //pname: PnameView(pname: '운영체제 10판',),
-                pname: PnameEdit(existingData: null,),
+                items: ItemsEdit(existingData : [Map()]),
+                /*pname: PnameEdit(existingData: null,),
                 //amount: AmountView(amount: '1',),
                 amount: AmountEdit(existingData: null,),
                 //cost: CostView(cost: '39,000',),
-                cost: CostEdit(existingData: null,),
+                cost: CostEdit(existingData: null,),*/
                 //totalcost: TotalCostView(totalcost: '39,000',),
                 totalcost: TotalCostView(totalcost: null ),
               ),

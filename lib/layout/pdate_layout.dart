@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PdateView extends StatelessWidget {
-  final String pdate;
+  final String? pdate;
 
   const PdateView({super.key, required this.pdate,});
 
