@@ -12,6 +12,7 @@ import 'package:easybudget/layout/purchased_layout.dart';
 import 'package:easybudget/layout/receipt_layout.dart';
 import 'package:easybudget/layout/totalcost_layout.dart';
 import 'package:easybudget/layout/writer_layout.dart';
+import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:flutter/material.dart';
 
 class ReceiptEditScreen extends StatelessWidget {
@@ -50,25 +51,13 @@ class ReceiptEditScreen extends StatelessWidget {
                 child: _VerificationBox(),
               ),*/
               ReceiptLayout(
-                //purchased: PurchasedView(perchased: '(수원) 222경기대학교 구내 서점',),
                 purchased: PurchasedEdit(existingData: purchased),
-                //address: AddressView(address: '경기 수원시 영통구 광교산로 154-42',),
                 address: AddressEdit(existingData: address,),
-                //pdate: PdateView(pdate: '2024-03-13',),
                 pdate: PdateEdit(existingData : date),
-                //category: CategoryView(category: '식비',),
                 category: CategoryEdit(),
-                //writer: WriterView(name: '유윤정', uid: 'yyj0310',),
                 writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                //pname: PnameView(pname: '운영체제 10판',),
-                items: ItemsView(items: items,),
-                /*pname: PnameEdit(existingData: pname,),
-                //amount: AmountView(amount: '1',),
-                amount: AmountEdit(existingData: amount,),
-                //cost: CostView(cost: '39,000',),
-                cost: CostEdit(existingData: cost,),*/
+                items: ItemsEdit(existingData: items,),
                 totalcost: TotalCostView(totalcost: totalCost,),
-                //totalcost: TotalCostView(totalcost: null ),
               ),
               SizedBox(height: 20,),
               Row(
@@ -76,7 +65,18 @@ class ReceiptEditScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReceiptScanComfirmScreen(
+                            purchased: purchased,
+                            address: address,
+                            date: date,
+                            items: items,
+                            totalCost: totalCost,
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: blueColor,
@@ -92,7 +92,7 @@ class ReceiptEditScreen extends StatelessWidget {
                       padding: EdgeInsets.all(15), // 높이를 5씩 늘림
                     ),
                     child: Text(
-                      '등록',
+                      '저장',
                     ),
                   ),
                 ],

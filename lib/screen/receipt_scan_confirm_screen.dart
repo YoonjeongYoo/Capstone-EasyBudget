@@ -113,6 +113,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
                   SizedBox(width: 10,),
                   ElevatedButton(
                     onPressed: () {
+                      // 값이 BD에 등록되도록 DB랑 연결
 
                     },
                     style: ElevatedButton.styleFrom(

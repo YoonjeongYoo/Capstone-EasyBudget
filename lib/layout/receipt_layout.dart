@@ -7,12 +7,8 @@ class ReceiptLayout extends StatelessWidget {
   final Widget pdate;
   final Widget category;
   final Widget items;
-  /*final Widget pname;
-  final Widget amount;
-  final Widget cost;*/
   final Widget totalcost;
   final Widget writer;
-
 
   const ReceiptLayout({
     super.key,
@@ -20,9 +16,6 @@ class ReceiptLayout extends StatelessWidget {
     required this.address,
     required this.pdate,
     required this.category,
-    /*required this.pname,
-    required this.amount,
-    required this.cost,*/
     required this.items,
     required this.totalcost,
     required this.writer,
