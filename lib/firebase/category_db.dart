@@ -40,8 +40,8 @@ Future<void> appendCategory(String cname) async {
   try {
     final data1 = cname;
     await space.doc(await searchSpace()).collection('Category')
-          .doc('categories').update({
-        "cname": FieldValue.arrayUnion([data1]),
+        .doc('categories').update({
+      "cname": FieldValue.arrayUnion([data1]),
     });
     print('Data updated!');
   } catch (e) {

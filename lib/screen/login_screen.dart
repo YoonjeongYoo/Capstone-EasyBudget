@@ -1,5 +1,4 @@
 import 'package:easybudget/constant/color.dart';
-import 'package:easybudget/database/find_db.dart';
 import 'package:easybudget/firebase/category_db.dart';
 import 'package:easybudget/firebase/signup_db.dart';
 import 'package:easybudget/screen/search_ID.dart';
@@ -100,10 +99,6 @@ class LoginScreen extends StatelessWidget {
             // 로그인 버튼
             ElevatedButton(
               onPressed: () async {
-                bool loginResult = await verifyLoginCredentials(userIdController.text, passwordController.text);
-                if (loginResult) {
-                  // 로그인 성공
-                  print('로그인 성공');
                 saveUserID(userIdController.text);
                 String? userInfo = await searchUser();
                 if(userInfo != '') {
@@ -111,15 +106,38 @@ class LoginScreen extends StatelessWidget {
                   // print(await searchData());
                   await appendCategory('event');
                   print(await getCateName());
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SpaceManagementScreen(), // Unchanged
+                      builder: (context) => SpaceManagementScreen(), // 수정
                     ),
                   );
                 } else {
-                  // 로그인 실패
-                  print('로그인 실패');
+                  print('failed to login');
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text('아이디 또는 비밀번호가 올바르지 않습니다!'),
+                          actions: [
+                            TextButton(
+                              child: Text('닫기'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      }
+                  );
+                }
+                /*final loginCheck = await login(
+                  userIdController.text, passwordController.text
+                );
+                print(loginCheck);*/
+                /*if (loginCheck == '-1') {
+                  print('failed to login');
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -134,29 +152,37 @@ class LoginScreen extends StatelessWidget {
                           )
                         ],
                       );
-                    },
+                    }
                   );
-                }
+                } else {
+                  saveUserID(userIdController.text);
+                  print('로그인 성공');
+                  print(authorityCheck(userIdController.text, '11aa'));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SpaceManagementScreen(), // 수정
+                    ),
+                  );
+                }*/
               },
-              // 버튼 스타일은 그대로 유지
               style: ElevatedButton.styleFrom(
                 backgroundColor: blueColor,
                 foregroundColor: primaryColor,
                 textStyle: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'NotoSansKR',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR'
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
                 ),
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
               ),
               child: Text(
                 '로그인',
               ),
             ),
-
             SizedBox(height: 5,),
             OutlinedButton(
               onPressed: () {

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easybudget/layout/address_layout.dart';
 import 'package:easybudget/layout/amount_layout.dart';
 import 'package:easybudget/layout/category_layout.dart';
@@ -17,7 +18,13 @@ import 'package:easybudget/layout/default_layout.dart';
 import 'package:easybudget/constant/color.dart';
 
 class ReceiptInputScreen extends StatelessWidget {
-  const ReceiptInputScreen({super.key});
+  final TextEditingController purchasedController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController categoryController = TextEditingController();
+  final TextEditingController writerController = TextEditingController();
+  final TextEditingController itemsController = TextEditingController();
+  final TextEditingController totalCostController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,35 +41,28 @@ class ReceiptInputScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              /*Flexible(
-                fit: FlexFit.tight,
-                child: _VerificationBox(),
-              ),*/
               ReceiptLayout(
-                //purchased: PurchasedView(perchased: '(수원) 222경기대학교 구내 서점',),
                 purchased: PurchasedEdit(existingData: null),
-                //address: AddressView(address: '경기 수원시 영통구 광교산로 154-42',),
                 address: AddressEdit(existingData: null,),
-                //pdate: PdateView(pdate: '2024-03-13',),
                 pdate: PdateEdit(existingData : null),
-                //category: CategoryView(category: '식비',),
                 category: CategoryEdit(),
-                //writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                //pname: PnameView(pname: '운영체제 10판',),
+                writer: WriterView(name: '유윤정', uid: 'yyj0310',), //user 값 받아와서..
                 items: ItemsEdit(existingData : [Map()]),
-                /*pname: PnameEdit(existingData: null,),
-                //amount: AmountView(amount: '1',),
-                amount: AmountEdit(existingData: null,),
-                //cost: CostView(cost: '39,000',),
-                cost: CostEdit(existingData: null,),*/
-                //totalcost: TotalCostView(totalcost: '39,000',),
+                //plus: ItemPlusButton(onPressed: () {  },),
                 totalcost: TotalCostView(totalcost: null ),
               ),
               SizedBox(height: 20,),
               ElevatedButton(
-                onPressed: () {
-
+                onPressed: () async {
+                  await addReceiptToFirebase(
+                    purchasedController.text,
+                    addressController.text,
+                    dateController.text,
+                    categoryController.text,
+                    writerController.text,
+                    itemsController.text,
+                    totalCostController.text,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: blueColor,
@@ -86,5 +86,25 @@ class ReceiptInputScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+  Future<void> addReceiptToFirebase(
+      String purchased,
+      String address,
+      String date,
+      String category,
+      String writer,
+      String items,
+      String totalCost,
+      ) async {
+    CollectionReference receipts = FirebaseFirestore.instance.collection('receipts');
+    await receipts.add({
+      'purchased': purchased,
+      'address': address,
+      'date': date,
+      'category': category,
+      'writer': writer,
+      'items': items,
+      'totalCost': totalCost,
+    });
   }
 }
