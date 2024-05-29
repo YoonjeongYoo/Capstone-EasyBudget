@@ -234,16 +234,18 @@ class _ScanDialogState extends State<ScanDialog> {
         print('Raw JSON Response: $jsonResponse');  // 응답 출력
 
         // JSON 응답에서 필요한 데이터 추출
-        final String purchased = jsonResponse['images']?[0]?['receipt']?['result']?['storeInfo']?['name']?.toString() ?? '';
-        final String address = jsonResponse['images']?[0]?['receipt']?['result']?['storeInfo']?['address']?.toString() ?? '';
-        final String date = jsonResponse['images']?[0]?['receipt']?['result']?['paymentInfo']?['date']?['text']?.toString() ?? '';
+        final String purchased = jsonResponse['images'][0]['receipt']['result']['storeInfo']['name']['text'] ?? 'Unknown';
+        final String address = jsonResponse['images'][0]['receipt']['result']['storeInfo']['addresses'][0]['text'] ?? 'Unknown';
+        final String date = jsonResponse['images']?[0]?['receipt']?['result']?['paymentInfo']?['date']?['text']?.toString() ?? 'Unknown';
+        final String totalCost = jsonResponse['images']?[0]?['receipt']?['result']?['totalPrice']?['price']?['text']?.toString() ?? 'Unknown';
+
         final items = jsonResponse['images']?[0]?['receipt']?['result']?['subResults']?[0]?['items'] ?? [];
 
-        // items 배열에서 각 항목의 name 값을 추출
+        // items 배열에서 각 항목의 값을 추출
         List<Map<String, String>> parsedItems = items.map<Map<String, String>>((item) {
-          final name = item['name']?['text']?.toString() ?? '';
-          final count = item['count']?['text']?.toString() ?? '';
-          final cost = item['price']?['text']?.toString() ?? '';
+          final name = item['name']?['text']?.toString() ?? 'Unknown';
+          final count = item['count']?['text']?.toString() ?? 'Unknown';
+          final cost = item['price']?['price']?['text']?.toString() ?? 'Unknown';
           return {
             'name': name,
             'count': count,
@@ -251,7 +253,6 @@ class _ScanDialogState extends State<ScanDialog> {
           };
         }).toList();
 
-        final String totalCost = jsonResponse['images']?[0]?['receipt']?['result']?['paymentInfo']?['total']?['text']?.toString() ?? '';
 
         // ReceiptScanConfirmScreen으로 이동하면서 데이터 전달
         Navigator.push(
