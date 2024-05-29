@@ -7,8 +7,8 @@ import '../firebase/object_db.dart';
 import '../firebase/login_db.dart';
 import 'package:flutter/material.dart';
 
-Future<String> searchData() async {
-  print("searching data...");
+Future<String?> searchUser() async {
+  print("searching user...");
   final db = FirebaseFirestore.instance;
   late String res = '';
   late String docid = '';
@@ -34,7 +34,58 @@ Future<String> searchData() async {
   return docid;
 }
 
-Future<String?> checkData(String uid) async {
+Future<String?> searchSpace() async {
+  print("searching space...");
+  final db = FirebaseFirestore.instance;
+  late String res = '';
+  late String docid = '';
+  try {
+
+    await db.collection("Space")
+        .where("sid", isEqualTo: '11bb')
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        //print(element.id);
+        docid = element.id;
+      }
+    });
+  } catch (e) {
+    print(e);
+  } finally {
+    print('successfully searched space: $docid!');
+  }
+  return docid;
+}
+
+Future<String?> searchData() async {
+  print("searching data...");
+  final db = FirebaseFirestore.instance;
+  late String res = '';
+  late String docid = '';
+  try {
+    await searchSpace().then((value) {
+      res = value.toString();
+    });
+    
+    await db.collection("Space")
+        .doc(res)
+        .collection('Category')
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        print(element.id);
+      }
+    });
+  } catch (e) {
+    print(e);
+  } finally {
+    print('successfully searched data!');
+  }
+  return docid;
+}
+
+Future<String?> checkUserId(String uid) async {
   print("checking data...");
 
   final db = FirebaseFirestore.instance;
@@ -61,4 +112,68 @@ Future<String?> checkData(String uid) async {
     }
   }
   return docid;
+}
+Future<bool> verifyLoginCredentials(String userId, String password) async {
+  final db = FirebaseFirestore.instance;
+  bool loginSuccess = false;
+
+  try {
+    final querySnapshot = await db.collection("User")
+        .where("uid", isEqualTo: userId)
+        .where("pw", isEqualTo: password)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // 로그인 성공
+      loginSuccess = true;
+      print('로그인 성공');
+      for (var doc in querySnapshot.docs) {
+        print('Document ID: ${doc.id}');
+        print('Document Data: ${doc.data()}');
+      }
+    } else {
+      // 로그인 실패
+      print('로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다. $password');
+    }
+  } catch (e) {
+    print('로그인 중 오류 발생: $e');
+  }
+
+  return loginSuccess;
+}
+
+Future<String?> getCateName() async {
+  final db = FirebaseFirestore.instance;
+  String? cname;
+  print("Fetching cname data...");
+
+  try {
+    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await db
+        .collection('Space')
+        .doc(await searchSpace())
+        .collection('Category')
+        .doc('categories')
+        .get();
+
+    if (docSnapshot.exists) {
+      List<dynamic>? cnameList = docSnapshot.data()?['cname'];
+      if (cnameList != null && cnameList.isNotEmpty) {
+        //print('cname List:');
+        for (cname in cnameList) {
+          //print(cname);
+          if(cname=='event') {break;}
+        }
+      } else {
+        print('cname field is empty or does not exist.');
+      }
+    } else {
+      print('Document does not exist.');
+    }
+  } catch (e) {
+    print('Error fetching cname data: $e');
+  } finally {
+    print('Finished fetching cname data.');
+  }
+
+  return cname;
 }
