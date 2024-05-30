@@ -55,6 +55,8 @@ class _ChartScreenState extends State<ChartScreen> {
           print('totalExpense: $totalExpense');
           print('totalBudget: $totalBudget');
         });
+      } else {
+        print('BudgetAnalysis document does not exist.');
       }
 
       // DatewiseData 데이터 불러오기
@@ -69,11 +71,12 @@ class _ChartScreenState extends State<ChartScreen> {
       Map<String, Map<String, double>> tempData = {};
       List<String> tempDateOptions = [];
       for (var doc in datewiseDataSnapshot.docs) {
+        print('Document ID: ${doc.id}, Data: ${doc.data()}'); // 디버깅용
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         tempData[doc.id] = {
-          '식비': data['식비']?.toDouble() ?? 0.0,
-          '교통비': data['교통비']?.toDouble() ?? 0.0,
-          '기타': data['기타']?.toDouble() ?? 0.0,
+          '식비 지출': data['식비 지출']?.toDouble() ?? 0.0,
+          '숙소 지출': data['숙소 지출']?.toDouble() ?? 0.0,
+          '운영 지출': data['운영 지출']?.toDouble() ?? 0.0,
         };
         tempDateOptions.add(doc.id);
       }
@@ -84,7 +87,7 @@ class _ChartScreenState extends State<ChartScreen> {
         if (!dateOptions.contains(selectedDate)) {
           selectedDate = dateOptions.isNotEmpty ? dateOptions[0] : '';
         }
-        _selectedData = dateData[selectedDate] ?? {'식비': 0.0, '교통비': 0.0, '기타': 0.0};
+        _selectedData = dateData[selectedDate] ?? {'식비 지출': 0.0, '숙소 지출': 0.0, '운영 지출': 0.0};
         print('dateData: $dateData');
       });
     } catch (e) {
@@ -191,11 +194,18 @@ class _ChartScreenState extends State<ChartScreen> {
         );
 
       case '날짜별':
+      // 디버깅 코드 추가
+        print('selectedDate: $selectedDate');
+        print('_selectedData: $_selectedData');
+        print('dateData: $dateData');
+
         List<FlSpot> lineSpots = List.generate(dateOptions.length, (index) {
           String selectedMonth = dateOptions[index];
           double total = dateData[selectedMonth]?.values.reduce((a, b) => a + b) ?? 0.0;
           return FlSpot(index.toDouble(), total);
         });
+
+        print('lineSpots: $lineSpots');
 
         String formatValue(double value) {
           if (value >= 1000000) {
@@ -209,7 +219,7 @@ class _ChartScreenState extends State<ChartScreen> {
 
         double calculateInterval() {
           final double maxY = lineSpots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
-          return maxY / 5;
+          return (maxY / 5) > 0 ? maxY / 5 : 1;
         }
 
         return SingleChildScrollView(
@@ -226,7 +236,9 @@ class _ChartScreenState extends State<ChartScreen> {
                 onChanged: (String? newValue) {
                   setState(() {
                     selectedDate = newValue!;
-                    _selectedData = dateData[selectedDate] ?? {'식비': 0.0, '교통비': 0.0, '기타': 0.0};
+                    _selectedData = dateData[selectedDate] ?? {'식비 지출': 0.0, '숙소 지출': 0.0, '운영 지출': 0.0};
+                    print('New selectedDate: $selectedDate');
+                    print('New _selectedData: $_selectedData');
                   });
                 },
               ),
@@ -238,21 +250,21 @@ class _ChartScreenState extends State<ChartScreen> {
                     centerSpaceRadius: 40,
                     sections: [
                       PieChartSectionData(
-                        value: _selectedData['식비']!,
+                        value: _selectedData['식비 지출']!,
                         color: Colors.blue,
-                        title: '식비',
+                        title: '식비 지출',
                         radius: 50,
                       ),
                       PieChartSectionData(
-                        value: _selectedData['교통비']!,
+                        value: _selectedData['숙소 지출']!,
                         color: Colors.green,
-                        title: '교통비',
+                        title: '숙소 지출',
                         radius: 50,
                       ),
                       PieChartSectionData(
-                        value: _selectedData['기타']!,
+                        value: _selectedData['운영 지출']!,
                         color: Colors.orange,
-                        title: '기타',
+                        title: '운영 지출',
                         radius: 50,
                       ),
                     ],
@@ -272,11 +284,11 @@ class _ChartScreenState extends State<ChartScreen> {
                           getTitlesWidget: (double value, TitleMeta meta) {
                             switch (value.toInt()) {
                               case 0:
-                                return Text('식비');
+                                return Text('식비 지출');
                               case 1:
-                                return Text('교통비');
+                                return Text('숙소 지출');
                               case 2:
-                                return Text('기타');
+                                return Text('운영 지출');
                               default:
                                 return Text('');
                             }
@@ -293,7 +305,7 @@ class _ChartScreenState extends State<ChartScreen> {
                         x: 0,
                         barRods: [
                           BarChartRodData(
-                            toY: _selectedData['식비']!,
+                            toY: _selectedData['식비 지출']!,
                             color: Colors.blue,
                           )
                         ],
@@ -302,7 +314,7 @@ class _ChartScreenState extends State<ChartScreen> {
                         x: 1,
                         barRods: [
                           BarChartRodData(
-                            toY: _selectedData['교통비']!,
+                            toY: _selectedData['숙소 지출']!,
                             color: Colors.green,
                           )
                         ],
@@ -311,7 +323,7 @@ class _ChartScreenState extends State<ChartScreen> {
                         x: 2,
                         barRods: [
                           BarChartRodData(
-                            toY: _selectedData['기타']!,
+                            toY: _selectedData['운영 지출']!,
                             color: Colors.orange,
                           )
                         ],
