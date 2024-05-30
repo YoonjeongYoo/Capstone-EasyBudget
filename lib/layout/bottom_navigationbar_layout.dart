@@ -262,6 +262,7 @@ class _ScanDialogState extends State<ScanDialog> {
               purchased: purchased,
               address: address,
               date: date,
+              category: '',
               items: parsedItems,
               totalCost: totalCost,
             ),
@@ -291,7 +292,7 @@ class _ScanDialogState extends State<ScanDialog> {
           },
           child: Text(
             '영수증 사진 스캔',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: blueColor),
           ),
         ),
         CupertinoActionSheetAction(
@@ -300,7 +301,7 @@ class _ScanDialogState extends State<ScanDialog> {
           },
           child: Text(
             '앨범에서 선택',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: blueColor),
           ),
         ),
         CupertinoActionSheetAction(
@@ -314,7 +315,7 @@ class _ScanDialogState extends State<ScanDialog> {
           },
           child: Text(
             '수기로 작성',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: blueColor),
           ),
         ),
       ],
@@ -324,7 +325,7 @@ class _ScanDialogState extends State<ScanDialog> {
         },
         child: Text(
           '취소',
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: blueColor),
         ),
       ),
     );

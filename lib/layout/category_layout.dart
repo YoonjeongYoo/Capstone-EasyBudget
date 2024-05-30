@@ -23,27 +23,27 @@ class CategoryView extends StatelessWidget {
 }
 
 class CategoryEdit extends StatefulWidget {
-  const CategoryEdit({super.key});
+  final TextEditingController controller;
+
+  const CategoryEdit({super.key, required this.controller});
 
   @override
-  State<CategoryEdit> createState() => _PdateEditState();
+  State<CategoryEdit> createState() => _CategoryEditState();
 }
 
-class _PdateEditState extends State<CategoryEdit> {
-  final _categories = ['카테고리 선택','교통비', '식비', '도서']; // DB에서 받아오도록
+class _CategoryEditState extends State<CategoryEdit> {
+  final _categories = ['카테고리 선택', '교통비', '식비', '도서']; // DB에서 받아오도록
   String? _selectedCat;
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _selectedCat = _categories[0];
-    });
+    _selectedCat = widget.controller.text.isNotEmpty ? widget.controller.text : _categories[0];
+    widget.controller.text = _selectedCat!;
   }
 
   @override
   Widget build(BuildContext context) {
-
     return DropdownButton(
       value: _selectedCat,
       items: _categories
@@ -54,7 +54,8 @@ class _PdateEditState extends State<CategoryEdit> {
           .toList(),
       onChanged: (value) {
         setState(() {
-          _selectedCat = value!;
+          _selectedCat = value;
+          widget.controller.text = value!;
         });
       },
     );

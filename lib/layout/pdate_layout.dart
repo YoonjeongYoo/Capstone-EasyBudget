@@ -21,24 +21,18 @@ class PdateView extends StatelessWidget {
 }
 
 class PdateEdit extends StatelessWidget {
-  final String? existingData;
+  final TextEditingController controller;
 
-  const PdateEdit({super.key, this.existingData});
+  const PdateEdit({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController(
-      text: existingData,
-    );
-
     return Container(
       width: 200,
       child: TextField(
-        controller: _controller,
+        controller: controller,
         decoration: InputDecoration(
-          hintText: existingData == null || existingData!.isEmpty
-              ? '거래 일시를 입력하세요'
-              : '',
+          hintText: controller.text.isEmpty ? '거래 일시를 입력하세요' : '',
           border: OutlineInputBorder(),
         ),
         style: TextStyle(
@@ -48,8 +42,8 @@ class PdateEdit extends StatelessWidget {
         ),
         scrollPhysics: BouncingScrollPhysics(),
         keyboardType: TextInputType.text,
-        minLines: 1, // 최소 줄 수
-        maxLines: 3, // 최대 줄 수
+        minLines: 1,
+        maxLines: 3,
         scrollPadding: EdgeInsets.all(5.0),
         textInputAction: TextInputAction.done,
         textAlignVertical: TextAlignVertical.center,

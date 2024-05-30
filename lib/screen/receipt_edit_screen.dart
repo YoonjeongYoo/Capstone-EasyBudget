@@ -1,13 +1,10 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/address_layout.dart';
-import 'package:easybudget/layout/amount_layout.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/category_layout.dart';
-import 'package:easybudget/layout/cost_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:easybudget/layout/itmes_layout.dart';
 import 'package:easybudget/layout/pdate_layout.dart';
-import 'package:easybudget/layout/pname_layout.dart';
 import 'package:easybudget/layout/purchased_layout.dart';
 import 'package:easybudget/layout/receipt_layout.dart';
 import 'package:easybudget/layout/totalcost_layout.dart';
@@ -19,6 +16,7 @@ class ReceiptEditScreen extends StatelessWidget {
   final String purchased;
   final String address;
   final String date;
+  final String category;
   final List<Map<String, String>> items;
   final String totalCost;
 
@@ -27,12 +25,21 @@ class ReceiptEditScreen extends StatelessWidget {
     required this.purchased,
     required this.address,
     required this.date,
+    required this.category,
     required this.items,
-    required this.totalCost
+    required this.totalCost,
   });
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController purchasedController = TextEditingController(text: purchased);
+    final TextEditingController addressController = TextEditingController(text: address);
+    final TextEditingController dateController = TextEditingController(text: date);
+    final TextEditingController categoryController = TextEditingController(text: category);
+    final TextEditingController totalCostController = TextEditingController(text: totalCost);
+
+    final GlobalKey<ItemsEditState> itemsEditKey = GlobalKey<ItemsEditState>();
+
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '영수증 정보 확인',
@@ -46,34 +53,39 @@ class ReceiptEditScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              /*Flexible(
-                fit: FlexFit.tight,
-                child: _VerificationBox(),
-              ),*/
               ReceiptLayout(
-                purchased: PurchasedEdit(existingData: purchased),
-                address: AddressEdit(existingData: address,),
-                pdate: PdateEdit(existingData : date),
-                category: CategoryEdit(),
-                writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                items: ItemsEdit(existingData: items,),
-                totalcost: TotalCostView(totalcost: totalCost,),
+                purchased: PurchasedEdit(controller: purchasedController),
+                address: AddressEdit(controller: addressController),
+                pdate: PdateEdit(controller: dateController),
+                category: CategoryEdit(controller: categoryController),
+                writer: WriterView(name: '유윤정', uid: 'yyj0310'),
+                items: ItemsEdit(key: itemsEditKey, existingData: items),
+                totalcost: TotalCostEdit(controller: totalCostController),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
+                      final itemsData = itemsEditKey.currentState!.controllers.map((item) {
+                        return {
+                          'name': item['name']!.text,
+                          'count': item['count']!.text,
+                          'cost': item['cost']!.text,
+                        };
+                      }).toList();
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ReceiptScanComfirmScreen(
-                            purchased: purchased,
-                            address: address,
-                            date: date,
-                            items: items,
-                            totalCost: totalCost,
+                            purchased: purchasedController.text,
+                            address: addressController.text,
+                            date: dateController.text,
+                            category: categoryController.text,
+                            items: itemsData,
+                            totalCost: totalCostController.text,
                           ),
                         ),
                       );
@@ -84,12 +96,11 @@ class ReceiptEditScreen extends StatelessWidget {
                       textStyle: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          fontFamily: 'NotoSansKR'
-                      ),
+                          fontFamily: 'NotoSansKR'),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      padding: EdgeInsets.all(15), // 높이를 5씩 늘림
+                      padding: EdgeInsets.all(15),
                     ),
                     child: Text(
                       '저장',
