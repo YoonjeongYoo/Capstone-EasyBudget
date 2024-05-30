@@ -2,7 +2,7 @@ import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/firebase/category_db.dart';
 import 'package:easybudget/firebase/signup_db.dart';
 import 'package:easybudget/screen/search_ID.dart';
-import 'package:easybudget/screen/signin_screen.dart';
+import 'package:easybudget/screen/signup_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easybudget/screen/search_password.dart';
