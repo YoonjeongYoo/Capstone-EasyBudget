@@ -39,26 +39,26 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
 
     var querySnapshot = await firestore
         .collection('Space')
-        .doc('u3dYxuN5bv8BxjV6AzpF') // 필요하다면 문서 ID 지정
-        .collection('Receipts')
-        .where('pdate', isGreaterThanOrEqualTo: startOfDay)
-        .where('pdate', isLessThanOrEqualTo: endOfDay)
+        .doc('KBpkiTfmpsg3ZI5iSpyY') // 필요하다면 문서 ID 지정
+        .collection('Receipt')
+        .where('date', isGreaterThanOrEqualTo: startOfDay)
+        .where('date', isLessThanOrEqualTo: endOfDay)
         .get();
 
     var fetchedExpenses = querySnapshot.docs.map((doc) {
-      print(doc['pdate']);
+      print(doc['date']);
       return {
         'id': doc.id, // 문서의 ID 추가
         'category': doc['category'],
-        'item': doc['pname'],
-        'amount': doc['totalcost'],
-        'store': doc['store'],
+        'item': doc['purchased'],
+        'amount': doc['totalCost'],
+        'store': doc['purchased'],
         'address': doc['address'],
-        'pdate': doc['pdate'],
+        'pdate': doc['date'] ?? Timestamp.now(), // null 체크 및 기본값 설정
         'writer': doc['writer'],
-        'pname': doc['pname'],
-        'amounts': doc['amount'],
-        'cost': doc['cost'],
+        'pname': doc['purchased'],
+        'amounts': doc['totalCost'],
+        'cost': doc['totalCost'],
       };
     }).toList();
 
@@ -71,9 +71,6 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
   Widget build(BuildContext context) {
     // 선택된 날짜에 대한 총 수입과 지출 계산
     int total = expenses.fold<int>(0, (int sum, dynamic expense) {
-      // 여기서 expense['amount']를 int로 캐스팅합니다.
-      // expense['amount']가 항상 int임을 확신할 수 있다면, 이 방법을 사용할 수 있습니다.
-      // 그렇지 않다면, 먼저 검사를 수행해야 할 수도 있습니다 (예를 들어, is int를 사용하여).
       return sum + (expense['amount'] as int);
     });
 

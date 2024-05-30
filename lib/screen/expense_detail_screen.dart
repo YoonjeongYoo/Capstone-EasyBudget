@@ -24,8 +24,8 @@ class ExpenseDetailsScreen extends StatelessWidget {
     // Firestore에서 items를 가져옵니다.
     final itemsSnapshot = await FirebaseFirestore.instance
         .collection('Space')
-        .doc('u3dYxuN5bv8BxjV6AzpF')
-        .collection('Receipts')
+        .doc('KBpkiTfmpsg3ZI5iSpyY')
+        .collection('Receipt')
         .doc(expense['id']) // 각 영수증의 고유 ID가 있다고 가정
         .collection('Item')
         .get();
@@ -43,10 +43,9 @@ class ExpenseDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     // Timestamp를 DateTime으로 변환
-    DateTime pdate = (expense['pdate'] as Timestamp).toDate();
+    DateTime pdate = (expense['date'] as Timestamp?)?.toDate() ?? DateTime.now(); // null 체크 추가
     // 원하는 형식으로 DateTime을 문자열로 변환
     String formattedPdate = '${pdate.year}-${pdate.month.toString().padLeft(2, '0')}-${pdate.day.toString().padLeft(2, '0')}';
-
 
     return DefaultLayout(
       appbar: AppbarLayout(
@@ -61,28 +60,12 @@ class ExpenseDetailsScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              /*Flexible(
-                fit: FlexFit.tight,
-                child: _VerificationBox(),
-              ),*/
               ReceiptLayout(
-                purchased: PurchasedView(perchased: '${expense['store']}',),
-                //purchased: PurchasedEdit(existingData: '(수원) 경기대학교 구내 서점'),
+                purchased: PurchasedView(perchased: '${expense['item']}',),
                 address: AddressView(address: '${expense['address']}',),
-                //address: AddressEdit(existingData: '경기 수원시 영통구 광교산로 154-42',),
                 pdate: PdateView(pdate: formattedPdate,),
-                //pdate: PdateEdit(existingData : '2024-03-13'),
                 category: CategoryView(category: '${expense['category']}',),
-                //category: CategoryEdit(),
-                writer: WriterView(name: '${expense['pname']}', uid: 'yyj0310',),
-                //writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                /*pname: PnameView(pname: '${expense['item']}',),
-                //pname: PnameEdit(existingData: '운영체제 10판',),
-                amount: AmountView(amount: '1',),
-                //amount: AmountEdit(existingData: '1',),
-                cost: CostView(cost: '${expense['amount']}',),*/
-                //items: ItemsView(items: [Map()],),
-                // Firebase에서 가져온 items를 표시하기 위해 FutureBuilder 사용
+                writer: WriterView(name: '${expense['writer']}', uid: 'yyj0310',),
                 items: FutureBuilder<List<Map<String, String>>>(
                   future: _fetchItems(),
                   builder: (context, snapshot) {
@@ -97,18 +80,14 @@ class ExpenseDetailsScreen extends StatelessWidget {
                     }
                   },
                 ),
-                //cost: CostEdit(existingData: '39,000',),
-                totalcost: TotalCostView(totalcost: '${expense['amount']}',),
-                //totalcost: TotalCostView(totalcost: null ),
+                totalcost: TotalCostView(totalcost: '${expense['cost']}',),
               ),
               SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: blueColor,
                       foregroundColor: primaryColor,

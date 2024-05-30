@@ -28,16 +28,16 @@ class _CalendarPageState extends State<CalendarPage> {
   Future<void> _fetchExpensesFromFirestore() async {
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('Space')
-        .doc('u3dYxuN5bv8BxjV6AzpF')
-        .collection('Receipts')
+        .doc('KBpkiTfmpsg3ZI5iSpyY')
+        .collection('Receipt')
         .get();
 
     final Map<DateTime, int> fetchedExpenses = {};
 
     for (var doc in snapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
-      final DateTime date = (data['pdate'] as Timestamp).toDate();
-      final int cost = data['totalcost'];
+      final DateTime date = (data['date'] as Timestamp).toDate();
+      final int cost = data['totalCost'];
 
       final dateKey = DateTime(date.year, date.month, date.day);
 
