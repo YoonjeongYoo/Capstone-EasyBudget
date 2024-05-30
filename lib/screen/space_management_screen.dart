@@ -201,7 +201,7 @@ class _SpaceContainer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TabView(), // 수정
+                      builder: (context) => TabView(spaceName: name), // 수정
                     ),
                   );
                 },
