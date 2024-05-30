@@ -15,7 +15,7 @@ Future<int?> authCheck() async {
     await user
           .doc(await searchUser(uid!))
           .collection('entered')
-          .where('sid', isEqualTo: "11bb") // need to set sid from saveSpaceId
+          .where('sid', isEqualTo: sid) // need to set sid from saveSpaceId
           .get()
           .then((value) {
       for (var element in value.docs) {
@@ -60,7 +60,7 @@ Future<void> authUpdate(int auth) async {
     await user
         .doc(await searchUser(uid!))
         .collection('entered')
-        .where('sid', isEqualTo: "11bb") // need to set sid from saveSpaceId
+        .where('sid', isEqualTo: sid) // need to set sid from saveSpaceId
         .get()
         .then((value) {
       for (var element in value.docs) {

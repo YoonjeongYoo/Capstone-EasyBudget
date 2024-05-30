@@ -33,7 +33,7 @@ Future<String?> searchSpace(String sid) async {
   try {
 
     await db.collection("Space")
-        .where("sid", isEqualTo: '11bb')
+        .where("sid", isEqualTo: sid)
         .get()
         .then((value) {
       for (var element in value.docs) {
