@@ -1,3 +1,5 @@
+import 'package:easybudget/layout/appbar_layout.dart';
+import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
 import 'expense_detail_screen.dart';
 import 'package:intl/intl.dart';
@@ -78,9 +80,10 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
     // total 포맷
     final formattedTotal = NumberFormat('#,###').format(total.abs());
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('달력', style: TextStyle(fontWeight: FontWeight.bold)),
+    return DefaultLayout(
+      appbar: AppbarLayout(
+        title: '달력',
+        action: [],
       ),
       body: Column(
         children: [

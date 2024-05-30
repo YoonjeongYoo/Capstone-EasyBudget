@@ -74,54 +74,57 @@ class _CalendarPageState extends State<CalendarPage> {
         title: '경기대학교 학생회',
         action: [],
       ),
-      body: TableCalendar(
-        locale: 'ko_KR',
-        firstDay: DateTime.utc(2020, 10, 16),
-        lastDay: DateTime.utc(2030, 3, 14),
-        focusedDay: _focusedDay,
-        calendarFormat: _calendarFormat,
-        eventLoader: _getEventsForDay,
-        onDaySelected: (selectedDay, focusedDay) {
-          setState(() {
-            _selectedDay = selectedDay;
-            _focusedDay = focusedDay;
-          });
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => BudgetDetailsScreen(
-                selectedDay: selectedDay,
-              ),
-            ),
-          );
-        },
-        calendarBuilders: CalendarBuilders(
-          defaultBuilder: (context, day, focusedDay) {
-            final expense = _getExpenseForDay(day);
-            Color backgroundColor;
-
-            if (expense > 0) {
-              backgroundColor = Colors.red;
-            } else if (expense < 0) {
-              backgroundColor = Colors.blue;
-            } else {
-              backgroundColor = Color(0xffffffff);
-            }
-
-            return Container(
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '${day.day}',
-                  style: TextStyle(
-                    color: backgroundColor == Colors.white ? Colors.black : Colors.white,
-                  ),
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: TableCalendar(
+          locale: 'ko_KR',
+          firstDay: DateTime.utc(2020, 10, 16),
+          lastDay: DateTime.utc(2030, 3, 14),
+          focusedDay: _focusedDay,
+          calendarFormat: _calendarFormat,
+          eventLoader: _getEventsForDay,
+          onDaySelected: (selectedDay, focusedDay) {
+            setState(() {
+              _selectedDay = selectedDay;
+              _focusedDay = focusedDay;
+            });
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => BudgetDetailsScreen(
+                  selectedDay: selectedDay,
                 ),
               ),
             );
           },
+          calendarBuilders: CalendarBuilders(
+            defaultBuilder: (context, day, focusedDay) {
+              final expense = _getExpenseForDay(day);
+              Color backgroundColor;
+
+              if (expense > 0) {
+                backgroundColor = Colors.red;
+              } else if (expense < 0) {
+                backgroundColor = Colors.blue;
+              } else {
+                backgroundColor = Color(0xffffffff);
+              }
+
+              return Container(
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '${day.day}',
+                    style: TextStyle(
+                      color: backgroundColor == Colors.white ? Colors.black : Colors.white,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
