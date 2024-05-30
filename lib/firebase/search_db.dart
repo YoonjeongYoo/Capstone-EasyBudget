@@ -149,3 +149,24 @@ Future<String?> getCateName() async {
 
   return cname;
 }
+
+// 로그인 검증 함수 추가
+Future<bool> validateLogin(String uid, String password) async {
+  final db = FirebaseFirestore.instance;
+  bool isValid = false;
+
+  try {
+    final querySnapshot = await db.collection("User")
+        .where("uid", isEqualTo: uid)
+        .where("pw", isEqualTo: password)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      isValid = true;
+    }
+  } catch (e) {
+    print("Error validating login: $e");
+  }
+
+  return isValid;
+}
