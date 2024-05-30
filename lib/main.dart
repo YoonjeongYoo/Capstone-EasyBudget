@@ -1,10 +1,11 @@
 import 'package:easybudget/constant/color.dart';
-//import 'package:easybudget/screen/logo_screen.dart';
+import 'package:easybudget/screen/logo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:easybudget/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:easybudget/screen/join_space_screen.dart';
+//import 'package:easybudget/screen/join_space_screen.dart';
+import 'package:easybudget/screen/auth_test_screen.dart';
 // import 'package:easybudget/screen/create_space_screen.dart';
 // import 'package:easybudget/screen/create_space_testscreen.dart';
 // import 'firebase_options.dart';
@@ -48,9 +49,9 @@ void main() async {
       ),
       //home: TabView(),
       //home: LogoScreen(),
-      //home: LoginPage(),
+      home: AuthScreen(),
       //home: SpaceManagementScreen(),
-      home: JoinSpaceScreen(),
+       // home: JoinSpaceScreen(),
       //  home: CreateSpaceWidget(),
     ),
   );

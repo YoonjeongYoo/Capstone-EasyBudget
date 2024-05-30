@@ -21,7 +21,7 @@ class _ChartScreenState extends State<ChartScreen> {
   double totalBudget = 0.0;
   double totalExpense = 0.0;
   Map<String, double> expenses = {};
-  Map<String, int> budgets = {};
+  Map<String, double> budgets = {};
 
   String selectedDate = '2023-05';
   List<String> dateOptions = [];
@@ -36,53 +36,60 @@ class _ChartScreenState extends State<ChartScreen> {
   Future<void> fetchDataFromFirestore() async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    // BudgetAnalysis 데이터 불러오기
-    DocumentSnapshot budgetAnalysisSnapshot = await firestore
-        .collection('Space')
-        .doc('KBpkiTfmpsg3ZI5iSpyY')
-        .collection('Chart')
-        .doc('BudgetAnalysis')
-        .get();
+    try {
+      // BudgetAnalysis 데이터 불러오기
+      DocumentSnapshot budgetAnalysisSnapshot = await firestore
+          .collection('Space')
+          .doc('KBpkiTfmpsg3ZI5iSpyY')
+          .collection('Chart')
+          .doc('BudgetAnalysis')
+          .get();
 
-    if (budgetAnalysisSnapshot.exists) {
-      Map<String, dynamic> data = budgetAnalysisSnapshot.data() as Map<String, dynamic>;
-      setState(() {
-        expenses = Map<String, double>.from(data['expenses']);
-        budgets = Map<String, int>.from(data['budgets']);
-        totalExpense = expenses.values.reduce((a, b) => a + b); // totalExpense 값을 expenses 요소들의 합으로 설정
-        totalBudget = budgets.values.reduce((a, b) => a + b).toDouble(); // totalBudget 값을 budgets 요소들의 합으로 설정
-      });
-    }
-
-    // DatewiseData 데이터 불러오기
-    QuerySnapshot datewiseDataSnapshot = await firestore
-        .collection('Space')
-        .doc('KBpkiTfmpsg3ZI5iSpyY')
-        .collection('Chart')
-        .doc('BudgetAnalysis')
-        .collection('DatewiseData')
-        .get();
-
-    Map<String, Map<String, double>> tempData = {};
-    List<String> tempDateOptions = [];
-    for (var doc in datewiseDataSnapshot.docs) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      tempData[doc.id] = {
-        '식비': data['식비'].toDouble(),
-        '교통비': data['교통비'].toDouble(),
-        '기타': data['기타'].toDouble(),
-      };
-      tempDateOptions.add(doc.id);
-    }
-
-    setState(() {
-      dateData = tempData;
-      dateOptions = tempDateOptions;
-      if (!dateOptions.contains(selectedDate)) {
-        selectedDate = dateOptions.isNotEmpty ? dateOptions[0] : '';
+      if (budgetAnalysisSnapshot.exists) {
+        Map<String, dynamic> data = budgetAnalysisSnapshot.data() as Map<String, dynamic>;
+        setState(() {
+          expenses = Map<String, double>.from(data['expenses']?.map((k, v) => MapEntry(k, v.toDouble())) ?? {});
+          budgets = Map<String, double>.from(data['budgets']?.map((k, v) => MapEntry(k, v.toDouble())) ?? {});
+          totalExpense = expenses.isNotEmpty ? expenses.values.reduce((a, b) => a + b) : 0.0;
+          totalBudget = budgets.isNotEmpty ? budgets.values.reduce((a, b) => a + b) : 0.0;
+          print('totalExpense: $totalExpense');
+          print('totalBudget: $totalBudget');
+        });
       }
-      _selectedData = dateData[selectedDate] ?? {'식비': 0, '교통비': 0, '기타': 0};
-    });
+
+      // DatewiseData 데이터 불러오기
+      QuerySnapshot datewiseDataSnapshot = await firestore
+          .collection('Space')
+          .doc('KBpkiTfmpsg3ZI5iSpyY')
+          .collection('Chart')
+          .doc('BudgetAnalysis')
+          .collection('DatewiseData')
+          .get();
+
+      Map<String, Map<String, double>> tempData = {};
+      List<String> tempDateOptions = [];
+      for (var doc in datewiseDataSnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        tempData[doc.id] = {
+          '식비': data['식비']?.toDouble() ?? 0.0,
+          '교통비': data['교통비']?.toDouble() ?? 0.0,
+          '기타': data['기타']?.toDouble() ?? 0.0,
+        };
+        tempDateOptions.add(doc.id);
+      }
+
+      setState(() {
+        dateData = tempData;
+        dateOptions = tempDateOptions;
+        if (!dateOptions.contains(selectedDate)) {
+          selectedDate = dateOptions.isNotEmpty ? dateOptions[0] : '';
+        }
+        _selectedData = dateData[selectedDate] ?? {'식비': 0.0, '교통비': 0.0, '기타': 0.0};
+        print('dateData: $dateData');
+      });
+    } catch (e) {
+      print('Error fetching data from Firestore: $e');
+    }
   }
 
   Widget _buildChart() {
@@ -110,17 +117,18 @@ class _ChartScreenState extends State<ChartScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('총 예산: ${formatValue(totalBudget)}', style: TextStyle(fontSize: 14)),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0), // 간격 추가
-                    child: GFProgressBar(
-                      percentage: 1.0,
-                      backgroundColor: Colors.grey.shade200,
-                      progressBarColor: Colors.green,
-                      lineHeight: 20,
-                      alignment: MainAxisAlignment.spaceBetween,
-                      trailing: Text('100.0%'),
+                  if (totalBudget > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: GFProgressBar(
+                        percentage: 1.0,
+                        backgroundColor: Colors.grey.shade200,
+                        progressBarColor: Colors.green,
+                        lineHeight: 20,
+                        alignment: MainAxisAlignment.spaceBetween,
+                        trailing: Text('100.0%'),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -130,17 +138,18 @@ class _ChartScreenState extends State<ChartScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('총 지출: ${formatValue(totalExpense)}', style: TextStyle(fontSize: 14)),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0), // 간격 추가
-                    child: GFProgressBar(
-                      percentage: totalExpense / totalBudget,
-                      backgroundColor: Colors.grey.shade200,
-                      progressBarColor: getProgressBarColor(totalExpense / totalBudget, 0.9),
-                      lineHeight: 20,
-                      alignment: MainAxisAlignment.spaceBetween,
-                      trailing: Text('${(totalExpense / totalBudget * 100).toStringAsFixed(1)}%'),
+                  if (totalBudget > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: GFProgressBar(
+                        percentage: totalExpense / totalBudget,
+                        backgroundColor: Colors.grey.shade200,
+                        progressBarColor: getProgressBarColor(totalExpense / totalBudget, 0.9),
+                        lineHeight: 20,
+                        alignment: MainAxisAlignment.spaceBetween,
+                        trailing: Text('${(totalExpense / totalBudget * 100).toStringAsFixed(1)}%'),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -152,25 +161,26 @@ class _ChartScreenState extends State<ChartScreen> {
                   String categoryKey = entry.key;
                   double expense = entry.value;
                   String budgetKey = categoryKey.replaceFirst('지출', '예산');
-                  double budget = budgets[budgetKey]?.toDouble() ?? 0.0;
+                  double budget = budgets[budgetKey] ?? 0.0;
 
                   return Padding(
-                    padding: const EdgeInsets.only(top: 10.0), // 간격 추가
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('$categoryKey: ${formatValue(expense)}', style: TextStyle(fontSize: 14)),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0), // 간격 추가
-                          child: GFProgressBar(
-                            percentage: budget != 0 ? expense / budget : 0,
-                            backgroundColor: Colors.grey.shade200,
-                            progressBarColor: getProgressBarColor(budget != 0 ? expense / budget : 0, 0.8),
-                            lineHeight: 20,
-                            alignment: MainAxisAlignment.spaceBetween,
-                            trailing: Text('${budget != 0 ? (expense / budget * 100).toStringAsFixed(1) : 0}%'),
+                        if (budget > 0)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: GFProgressBar(
+                              percentage: expense / budget,
+                              backgroundColor: Colors.grey.shade200,
+                              progressBarColor: getProgressBarColor(expense / budget, 0.8),
+                              lineHeight: 20,
+                              alignment: MainAxisAlignment.spaceBetween,
+                              trailing: Text('${(expense / budget * 100).toStringAsFixed(1)}%'),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   );
@@ -183,7 +193,7 @@ class _ChartScreenState extends State<ChartScreen> {
       case '날짜별':
         List<FlSpot> lineSpots = List.generate(dateOptions.length, (index) {
           String selectedMonth = dateOptions[index];
-          double total = dateData[selectedMonth]!.values.reduce((a, b) => a + b);
+          double total = dateData[selectedMonth]?.values.reduce((a, b) => a + b) ?? 0.0;
           return FlSpot(index.toDouble(), total);
         });
 
@@ -216,7 +226,7 @@ class _ChartScreenState extends State<ChartScreen> {
                 onChanged: (String? newValue) {
                   setState(() {
                     selectedDate = newValue!;
-                    _selectedData = dateData[selectedDate] ?? {'식비': 0, '교통비': 0, '기타': 0};
+                    _selectedData = dateData[selectedDate] ?? {'식비': 0.0, '교통비': 0.0, '기타': 0.0};
                   });
                 },
               ),
