@@ -17,6 +17,7 @@ class CreateSpaceScreen extends StatefulWidget {
 
 class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
   TextEditingController spaceNameController = TextEditingController();
+  TextEditingController totalBudgetController = TextEditingController();
   TextEditingController participationCodeController = TextEditingController();
   TextEditingController confirmParticipationCodeController = TextEditingController();
   TextEditingController tagController = TextEditingController();
@@ -52,11 +53,12 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
 
   Future<void> _createSpace() async {
     String spaceName = spaceNameController.text;
+    String spaceBudget = totalBudgetController.text;
     String joinCode = participationCodeController.text;
     String confirmJoinCode = confirmParticipationCodeController.text;
     String tag = tagController.text;
 
-    if (spaceName.isEmpty || joinCode.isEmpty || tag.isEmpty) {
+    if (spaceName.isEmpty || joinCode.isEmpty || tag.isEmpty || spaceBudget.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('모든 필드를 채워주세요.')),
       );
@@ -76,6 +78,11 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
         'sid': joinCode,
         'tag': tag,
         'approvalRequired': isApprovalRequired,
+        'sTotalBudget' : spaceBudget,
+      });
+
+      await FirebaseFirestore.instance.collection('EnteredSpace').add({
+        'sname': spaceName,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +92,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
       spaceNameController.clear();
       participationCodeController.clear();
       confirmParticipationCodeController.clear();
+      totalBudgetController.clear();
       tagController.clear();
       setState(() {
         isApprovalRequired = false;
@@ -94,6 +102,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
         SnackBar(content: Text('스페이스 생성 중 오류가 발생했습니다.')),
       );
     }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -214,7 +223,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                       ],
                     ),
                     TextField(
-                      controller: spaceNameController,
+                      controller: totalBudgetController,
                       decoration: InputDecoration(
                         hintText: '총 예산을 입력해 주세요.',
                       ),
