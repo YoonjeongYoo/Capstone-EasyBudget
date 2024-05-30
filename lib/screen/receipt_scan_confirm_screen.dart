@@ -194,7 +194,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TabView(), // TabView 위젯으로 이동
+                    builder: (context) => TabView(spaceName: '',), // TabView 위젯으로 이동
                   ),
                 );
               },

@@ -49,7 +49,7 @@ void main() async {
       ),
       //home: TabView(),
       //home: LogoScreen(),
-      home: CalendarPage(),
+      home: LogoScreen(),
       //home: SpaceManagementScreen(),
        // home: JoinSpaceScreen(),
       //  home: CreateSpaceWidget(),
