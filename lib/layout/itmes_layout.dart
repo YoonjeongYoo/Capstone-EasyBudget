@@ -15,8 +15,8 @@ class ItemsView extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
-        final itemName = item['name'] ?? 'Unknown';
-        final itemCount = item['count'] ?? 'Unknown';
+        final itemName = item['item_name'] ?? 'Unknown';
+        final itemCount = item['amount'] ?? 'Unknown';
         final itemCost = item['cost'] ?? 'Unknown';
 
         return Row(
