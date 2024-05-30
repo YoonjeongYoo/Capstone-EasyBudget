@@ -45,3 +45,43 @@ Future<int?> authCheck() async {
   }
   return auth;
 }
+
+Future<void> authUpdate(int auth) async {
+  final db = FirebaseFirestore.instance;
+  final user = db.collection('User');
+  final sid = await getSpaceId();
+  final uid = await getUserId();
+  String? docid;
+  final data1 = <String, dynamic>{
+    'auth': auth,
+  };
+
+  try {
+    await user
+        .doc(await searchUser(uid!))
+        .collection('entered')
+        .where('sid', isEqualTo: "11bb") // need to set sid from saveSpaceId
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        //print(element.id);
+        docid = element.id;
+      }
+    });
+    await user
+        .doc(await searchUser(uid))
+        .collection('entered')
+        .doc(docid!)
+        .update(data1);
+    final check = await authCheck();
+
+      print('auth is $check');
+
+
+  } catch (e) {
+    print('Error occurred while checking authority: $e');
+  } finally {
+    print('successfully checked authority');
+  }
+
+}
