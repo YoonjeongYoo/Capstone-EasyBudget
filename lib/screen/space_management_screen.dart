@@ -9,10 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import '../firebase/login_db.dart';
+import '../firebase/search_db.dart'; // getUserSpaces 함수를 사용하기 위해 import
 
 class SpaceManagementScreen extends StatelessWidget {
-  const SpaceManagementScreen({super.key});
+  final String userId; // 로그인 후 저장된 사용자 ID
+
+  const SpaceManagementScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,7 @@ class SpaceManagementScreen extends StatelessWidget {
               horizontal: 16,
             ),
             child: IconButton(
-              onPressed: (){
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -42,38 +45,45 @@ class SpaceManagementScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20,
-          vertical: 20
+          vertical: 20,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Flexible(
-            //   flex: 8,
-            //   child: SingleChildScrollView(
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.stretch,
-            //       children: [
-            //         _SpaceContainer(name: '경기대학교 학생회',),
-            //       ],
-            //     ),
-            //   ),
-            // ),
             Flexible(
               flex: 8,
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('EnteredSpace').snapshots(),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              child: FutureBuilder<List<String>>(
+                future: getUserSpaces(userId),
+                builder: (context, AsyncSnapshot<List<String>> snapshot) {
                   if (!snapshot.hasData) {
                     return Center(child: CircularProgressIndicator());
                   }
-                  return SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: snapshot.data!.docs.map((document) {
-                        return _SpaceContainer(name: document['sname']);
-                      }).toList(),
-                    ),
+                  if (snapshot.data!.isEmpty) {
+                    print("No spaces found for user: $userId"); // 디버깅 출력 추가
+                    return Center(child: Text("참여 중인 스페이스가 없습니다."));
+                  }
+
+                  List<String> spaceIds = snapshot.data!;
+                  print("User spaces: $spaceIds"); // 디버깅 출력 추가
+                  return StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('Space')
+                        .where(FieldPath.documentId, whereIn: spaceIds)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> spaceSnapshot) {
+                      if (!spaceSnapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      return SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: spaceSnapshot.data!.docs.map((document) {
+                            return _SpaceContainer(name: document['sname']);
+                          }).toList(),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -85,7 +95,6 @@ class SpaceManagementScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: 10.0),
-                  // 로그인 버튼
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -99,9 +108,9 @@ class SpaceManagementScreen extends StatelessWidget {
                       backgroundColor: blueColor,
                       foregroundColor: primaryColor,
                       textStyle: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'NotoSansKR'
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'NotoSansKR',
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
@@ -112,10 +121,9 @@ class SpaceManagementScreen extends StatelessWidget {
                       '스페이스 참가하기',
                     ),
                   ),
-                  SizedBox(height: 5,),
+                  SizedBox(height: 5),
                   OutlinedButton(
                     onPressed: () {
-                      // 회원가입 버튼을 눌렀을 때의 동작 추가
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -128,9 +136,9 @@ class SpaceManagementScreen extends StatelessWidget {
                       foregroundColor: blueColor,
                       side: BorderSide(color: blueColor),
                       textStyle: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'NotoSansKR'
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'NotoSansKR',
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
@@ -150,7 +158,6 @@ class SpaceManagementScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _SpaceContainer extends StatelessWidget {
   final String name;
@@ -183,14 +190,14 @@ class _SpaceContainer extends StatelessWidget {
               Text(
                 '$name',
                 style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR',
-                    color: blueColor
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'NotoSansKR',
+                  color: blueColor,
                 ),
               ),
               ElevatedButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -202,21 +209,21 @@ class _SpaceContainer extends StatelessWidget {
                   backgroundColor: blueColor,
                   foregroundColor: primaryColor,
                   textStyle: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'NotoSansKR'
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'NotoSansKR',
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 15,horizontal: 10), // 높이를 5씩 늘림
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10), // 높이를 5씩 늘림
                 ),
                 child: Text('입장하기'),
               ),
             ],
           ),
         ),
-        SizedBox(height: 10,)
+        SizedBox(height: 10),
       ],
     );
   }
