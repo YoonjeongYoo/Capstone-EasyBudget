@@ -8,6 +8,7 @@ import 'package:easybudget/screen/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class SpaceManagementScreen extends StatelessWidget {
@@ -47,15 +48,34 @@ class SpaceManagementScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Flexible(
+            //   flex: 8,
+            //   child: SingleChildScrollView(
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.stretch,
+            //       children: [
+            //         _SpaceContainer(name: '경기대학교 학생회',),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Flexible(
               flex: 8,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _SpaceContainer(name: '경기대학교 학생회',),
-                  ],
-                ),
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance.collection('EnteredSpace').snapshots(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: snapshot.data!.docs.map((document) {
+                        return _SpaceContainer(name: document['sname']);
+                      }).toList(),
+                    ),
+                  );
+                },
               ),
             ),
             Flexible(
