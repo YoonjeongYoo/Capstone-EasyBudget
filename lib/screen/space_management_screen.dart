@@ -48,17 +48,6 @@ class SpaceManagementScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Flexible(
-            //   flex: 8,
-            //   child: SingleChildScrollView(
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.stretch,
-            //       children: [
-            //         _SpaceContainer(name: '경기대학교 학생회',),
-            //       ],
-            //     ),
-            //   ),
-            // ),
             Flexible(
               flex: 8,
               child: StreamBuilder(
