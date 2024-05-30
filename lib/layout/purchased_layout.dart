@@ -20,24 +20,18 @@ class PurchasedView extends StatelessWidget {
 }
 
 class PurchasedEdit extends StatelessWidget {
-  final String? existingData;
+  final TextEditingController controller;
 
-  const PurchasedEdit({super.key, this.existingData});
+  const PurchasedEdit({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController(
-      text: existingData,
-    );
-
     return Container(
       width: 230,
       child: TextField(
-        controller: _controller,
+        controller: controller,
         decoration: InputDecoration(
-          hintText: existingData == null || existingData!.isEmpty
-              ? '구매처를 입력하세요'
-              : '',
+          hintText: controller.text.isEmpty ? '구매처를 입력하세요' : '',
           border: OutlineInputBorder(),
         ),
         style: TextStyle(
@@ -47,8 +41,8 @@ class PurchasedEdit extends StatelessWidget {
         ),
         scrollPhysics: BouncingScrollPhysics(),
         keyboardType: TextInputType.text,
-        minLines: 1, // 최소 줄 수
-        maxLines: 3, // 최대 줄 수
+        minLines: 1,
+        maxLines: 3,
         scrollPadding: EdgeInsets.all(5.0),
         textInputAction: TextInputAction.done,
         textAlignVertical: TextAlignVertical.center,

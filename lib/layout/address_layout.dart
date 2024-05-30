@@ -21,24 +21,18 @@ class AddressView extends StatelessWidget {
 }
 
 class AddressEdit extends StatelessWidget {
-  final String? existingData;
+  final TextEditingController controller;
 
-  const AddressEdit({super.key, this.existingData});
+  const AddressEdit({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController addresscontroller = TextEditingController(
-      text: existingData,
-    );
-
     return Container(
       width: 230,
       child: TextField(
-        controller: addresscontroller,
+        controller: controller,
         decoration: InputDecoration(
-          hintText: existingData == null || existingData!.isEmpty
-              ? '주소를 입력하세요'
-              : '',
+          hintText: controller.text.isEmpty ? '주소를 입력하세요' : '',
           border: OutlineInputBorder(),
         ),
         style: TextStyle(
@@ -48,8 +42,8 @@ class AddressEdit extends StatelessWidget {
         ),
         scrollPhysics: BouncingScrollPhysics(),
         keyboardType: TextInputType.text,
-        minLines: 1, // 최소 줄 수
-        maxLines: 3, // 최대 줄 수
+        minLines: 1,
+        maxLines: 3,
         scrollPadding: EdgeInsets.all(5.0),
         textInputAction: TextInputAction.done,
         textAlignVertical: TextAlignVertical.center,

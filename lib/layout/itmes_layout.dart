@@ -62,28 +62,38 @@ class ItemsEdit extends StatefulWidget {
   const ItemsEdit({super.key, required this.existingData});
 
   @override
-  State<ItemsEdit> createState() => _ItemsEditState();
+  State<ItemsEdit> createState() => ItemsEditState();
 }
 
-class _ItemsEditState extends State<ItemsEdit> {
-  List<Map<String, String>> newData = [];
+class ItemsEditState extends State<ItemsEdit> {
+  List<Map<String, TextEditingController>> controllers = [];
 
   @override
   void initState() {
     super.initState();
-    newData.addAll(widget.existingData);
+    controllers = widget.existingData.map((item) {
+      return {
+        'name': TextEditingController(text: item['name']),
+        'count': TextEditingController(text: item['count']),
+        'cost': TextEditingController(text: item['cost']),
+      };
+    }).toList();
   }
 
   void addItem() {
     setState(() {
-      newData.add({'name': '', 'count': '', 'cost': ''});
+      controllers.add({
+        'name': TextEditingController(),
+        'count': TextEditingController(),
+        'cost': TextEditingController(),
+      });
     });
   }
 
   void removeItem(int index) {
     setState(() {
-      if (newData.length > 1) {
-        newData.removeAt(index);
+      if (controllers.length > 1) {
+        controllers.removeAt(index);
       }
     });
   }
@@ -93,14 +103,12 @@ class _ItemsEditState extends State<ItemsEdit> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ...newData.asMap().entries.map((entry) {
+          ...controllers.asMap().entries.map((entry) {
             final index = entry.key;
             final item = entry.value;
-            final nameController = TextEditingController(text: item['name']);
-            final countController =
-            TextEditingController(text: item['count']);
-            final costController =
-            TextEditingController(text: item['cost']);
+            final nameController = item['name']!;
+            final countController = item['count']!;
+            final costController = item['cost']!;
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -122,8 +130,8 @@ class _ItemsEditState extends State<ItemsEdit> {
                       ),
                       scrollPhysics: BouncingScrollPhysics(),
                       keyboardType: TextInputType.text,
-                      minLines: 1, // 최소 줄 수
-                      maxLines: 1, // 최대 줄 수
+                      minLines: 1,
+                      maxLines: 1,
                       scrollPadding: EdgeInsets.all(5.0),
                       textInputAction: TextInputAction.done,
                       textAlignVertical: TextAlignVertical.center,
@@ -144,8 +152,8 @@ class _ItemsEditState extends State<ItemsEdit> {
                       ),
                       scrollPhysics: BouncingScrollPhysics(),
                       keyboardType: TextInputType.number,
-                      minLines: 1, // 최소 줄 수
-                      maxLines: 1, // 최대 줄 수
+                      minLines: 1,
+                      maxLines: 1,
                       scrollPadding: EdgeInsets.all(5.0),
                       textInputAction: TextInputAction.done,
                       textAlignVertical: TextAlignVertical.center,
@@ -166,8 +174,8 @@ class _ItemsEditState extends State<ItemsEdit> {
                       ),
                       scrollPhysics: BouncingScrollPhysics(),
                       keyboardType: TextInputType.number,
-                      minLines: 1, // 최소 줄 수
-                      maxLines: 1, // 최대 줄 수
+                      minLines: 1,
+                      maxLines: 1,
                       scrollPadding: EdgeInsets.all(5.0),
                       textInputAction: TextInputAction.done,
                       textAlignVertical: TextAlignVertical.center,
@@ -175,20 +183,21 @@ class _ItemsEditState extends State<ItemsEdit> {
                   ),
                   IconButton(
                     icon: Icon(CupertinoIcons.minus_circle),
-                    onPressed: () => removeItem(index), // 삭제 버튼에 removeItem 함수 호출 추가
+                    onPressed: () => removeItem(index),
                     color: Colors.red,
                   ),
                 ],
               ),
             );
           }).toList(),
-          SizedBox(height: 16), // 추가된 버튼과 위젯 사이에 여백 추가
-          ItemPlusButton(onPressed: addItem), // 추가된 버튼 위젯
-        ]
+          SizedBox(height: 16),
+          ItemPlusButton(onPressed: addItem),
+        ],
       ),
     );
   }
 }
+
 
 class ItemPlusButton extends StatelessWidget {
   final VoidCallback onPressed;

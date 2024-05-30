@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/layout/bottom_navigationbar_layout.dart';
 import 'package:easybudget/screen/login_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class _LogoScreenState extends State<LogoScreen> {
       Duration(seconds: 4),
           () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),//SpaceManagementScreen()),
+        MaterialPageRoute(builder: (context) => TabView()),//SpaceManagementScreen()),
       ),
     );
   }
