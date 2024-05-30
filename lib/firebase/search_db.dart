@@ -1,11 +1,5 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easybudget/firebase_options.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import '../firebase/object_db.dart';
 import '../firebase/login_db.dart';
-import 'package:flutter/material.dart';
 
 Future<String?> searchUser() async {
   print("searching user...");
@@ -34,10 +28,10 @@ Future<String?> searchUser() async {
   return docid;
 }
 
-Future<String?> searchSpace() async {
+Future<String?> searchSpace(String sid) async {
   print("searching space...");
   final db = FirebaseFirestore.instance;
-  late String res = '';
+  //late String res = '';
   late String docid = '';
   try {
 
@@ -61,10 +55,11 @@ Future<String?> searchSpace() async {
 Future<String?> searchData() async {
   print("searching data...");
   final db = FirebaseFirestore.instance;
+  final sid = await getSpaceId();
   late String res = '';
   late String docid = '';
   try {
-    await searchSpace().then((value) {
+    await searchSpace(sid!).then((value) {
       res = value.toString();
     });
     
@@ -116,13 +111,14 @@ Future<String?> checkUserId(String uid) async {
 
 Future<String?> getCateName() async {
   final db = FirebaseFirestore.instance;
+  final sid = await getSpaceId();
   String? cname;
   print("Fetching cname data...");
 
   try {
     DocumentSnapshot<Map<String, dynamic>> docSnapshot = await db
         .collection('Space')
-        .doc(await searchSpace())
+        .doc(await searchSpace(sid!))
         .collection('Category')
         .doc('categories')
         .get();
