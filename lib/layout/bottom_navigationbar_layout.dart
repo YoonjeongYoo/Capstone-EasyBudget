@@ -82,7 +82,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
         children:  [
-          MainhomeScreen(),
+          MainHomeScreen(),
           ChartScreen(),
           SizedBox(), // Placeholder for Scan Dialog
           CalendarPage(),

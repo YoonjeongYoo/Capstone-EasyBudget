@@ -150,7 +150,55 @@ Future<String?> getCateName() async {
   return cname;
 }
 
-// 로그인 검증 함수 추가
+Future<void> loginUser(String uid, String password) async {
+  final db = FirebaseFirestore.instance;
+
+  try {
+    // 로그인 검증
+    bool isValid = await validateLogin(uid, password);
+
+    if (isValid) {
+      print("Login successful for user: $uid");
+
+      // 사용자 문서 조회
+      final userQuery = await db.collection("User").where("uid", isEqualTo: uid).get();
+
+      if (userQuery.docs.isNotEmpty) {
+        final userDoc = userQuery.docs.first;
+        final userData = userDoc.data();
+        print("User Data: $userData"); // 디버깅 출력 추가
+
+        if (userData != null) {
+          // 사용자가 참여하고 있는 Space ID 목록 조회
+          List<dynamic> spaceIds = userData['spaces'];
+          print("User spaces: $spaceIds"); // 디버깅 출력 추가
+
+          // Space 문서들 조회
+          for (var spaceId in spaceIds) {
+            final spaceDoc = await db.collection("Space").doc(spaceId).get();
+
+            if (spaceDoc.exists) {
+              final spaceData = spaceDoc.data();
+              print("Space ID: $spaceId, Data: $spaceData");
+            } else {
+              print("Space document with ID $spaceId does not exist.");
+            }
+          }
+        } else {
+          print("User data is null.");
+        }
+      } else {
+        print("User document does not exist for userId: $uid"); // 디버깅 출력 추가
+      }
+    } else {
+      print("Invalid login credentials for user: $uid");
+    }
+  } catch (e) {
+    print("Error during login process: $e");
+  }
+}
+
+// 로그인 검증 함수
 Future<bool> validateLogin(String uid, String password) async {
   final db = FirebaseFirestore.instance;
   bool isValid = false;
@@ -169,4 +217,21 @@ Future<bool> validateLogin(String uid, String password) async {
   }
 
   return isValid;
+}
+
+Future<List<String>> getUserSpaces(String userId) async {
+  final db = FirebaseFirestore.instance;
+  final userQuery = await db.collection("User").where("uid", isEqualTo: userId).get();
+
+  if (userQuery.docs.isNotEmpty) {
+    final userDoc = userQuery.docs.first;
+    final userData = userDoc.data();
+    print("User Data: $userData"); // 디버깅 출력 추가
+    if (userData != null && userData.containsKey('spaces')) {
+      return List<String>.from(userData['spaces']);
+    }
+  } else {
+    print("User document does not exist for userId: $userId"); // 디버깅 출력 추가
+  }
+  return [];
 }

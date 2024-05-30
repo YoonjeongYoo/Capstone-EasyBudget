@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart'; // NumberFormat을 사용하기 위해 임포트합니다.
 
-class MainhomeScreen extends StatelessWidget {
-  const MainhomeScreen({super.key});
+class MainHomeScreen extends StatelessWidget {
+  const MainHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

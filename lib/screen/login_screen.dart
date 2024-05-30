@@ -60,10 +60,10 @@ class LoginScreen extends StatelessWidget {
                   onPressed: () async {
                     try {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:(context)=> FindIdScreen(),
-                          )
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FindIdScreen(),
+                        ),
                       );
                     } catch (e) {
                       print("Error: $e");
@@ -80,10 +80,10 @@ class LoginScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:(context)=> PasswordResetScreen(),
-                        )
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PasswordResetScreen(),
+                      ),
                     );
                   },
                   child: Text(
@@ -122,14 +122,16 @@ class LoginScreen extends StatelessWidget {
                   return;
                 }
 
+                // 로그인 검증 및 사용자 정보 가져오기
                 bool isValid = await validateLogin(id, password); // validateLogin 함수 호출
 
                 if (isValid) {
+                  await loginUser(id, password); // loginUser 함수 호출
                   await saveUserID(id);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SpaceManagementScreen(), // 수정
+                      builder: (context) => SpaceManagementScreen(userId: id), // 수정
                     ),
                   );
                 } else {
@@ -155,9 +157,9 @@ class LoginScreen extends StatelessWidget {
                 backgroundColor: blueColor,
                 foregroundColor: primaryColor,
                 textStyle: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR'
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'NotoSansKR',
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
@@ -168,7 +170,7 @@ class LoginScreen extends StatelessWidget {
                 '로그인',
               ),
             ),
-            SizedBox(height: 5,),
+            SizedBox(height: 5),
             OutlinedButton(
               onPressed: () {
                 // 회원가입 버튼을 눌렀을 때의 동작 추가
@@ -184,9 +186,9 @@ class LoginScreen extends StatelessWidget {
                 foregroundColor: blueColor,
                 side: BorderSide(color: blueColor),
                 textStyle: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR'
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'NotoSansKR',
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
