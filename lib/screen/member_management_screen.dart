@@ -4,9 +4,45 @@ import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MemberManagementScreen extends StatelessWidget {
-  const MemberManagementScreen({super.key});
+  //const MemberManagementScreen({super.key});
+  final String spaceName;
+
+  const MemberManagementScreen({super.key, required this.spaceName});
+
+  Future<List<Map<String, dynamic>>> fetchMembers() async {
+    // Space 컬렉션에서 members 배열을 가져옵니다.
+    final spaceQuerySnapshot = await FirebaseFirestore.instance
+        .collection('Space')
+        .where('sname', isEqualTo: spaceName)
+        .get();
+
+    // 문서가 하나 이상일 경우 첫 번째 문서를 선택합니다.
+    final spaceSnapshot = spaceQuerySnapshot.docs.isNotEmpty
+        ? spaceQuerySnapshot.docs.first
+        : null;
+
+    if (spaceSnapshot == null) {
+      // 해당하는 스페이스가 없을 경우 빈 리스트를 반환합니다.
+      return [];
+    }
+
+    List<dynamic> memberIds = spaceSnapshot.data()?['members'] ?? [];
+
+    // members 배열의 각 문서 ID를 사용하여 user 컬렉션에서 데이터를 가져옵니다.
+    List<Map<String, dynamic>> members = [];
+    for (String memberId in memberIds) {
+      final userSnapshot = await FirebaseFirestore.instance.collection('User').doc(memberId).get();
+      if (userSnapshot.exists) {
+        members.add(userSnapshot.data()!);
+      }
+    }
+
+    return members;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -15,18 +51,37 @@ class MemberManagementScreen extends StatelessWidget {
         title: '스페이스 멤버 관리',
         action: [],
       ),
-      body: SingleChildScrollView( // 2. SingleChildScrollView 추가
-        child: Column(
-          children: [
-            _MemberContainer(name: '유윤정', uid: 'yyj0310', sid: '11aa', authority: 2, profile: 'asset/img/profile_img.jpg',),
-            _MemberContainer(name: '정지용', uid: 'jjy1234', sid: '11aa', authority: 1, profile: 'asset/img/profile_img_2.png',),
-            _MemberContainer(name: '조참솔', uid: 'ccs4321', sid: '11aa', authority: 3, profile: 'asset/img/profile_img_1.png',),
-            Divider(
-              color: Color(0xffe9ecef),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: fetchMembers(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No Members Found'));
+          }
+
+          final members = snapshot.data!;
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                for (var member in members)
+                  _MemberContainer(
+                    name: member['uname'],
+                    uid: member['uid'],
+                    sid: '11aa',
+                    authority: 3,
+                    profile: 'asset/img/profile_img_1.png',
+                  ),
+                Divider(
+                  color: Color(0xffe9ecef),
+                ),
+                // Add other notification widgets
+              ],
             ),
-            // 다른 알림 위젯들 추가
-          ],
-        ),
+          );
+        },
       ),
     );
   }

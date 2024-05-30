@@ -14,12 +14,16 @@ import 'package:easybudget/screen/receipt_input_screen.dart';
 import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:easybudget/screen/space_setting_screen.dart';
 import 'package:path_provider/path_provider.dart';
-import '../screen/login_screen.dart';
+//import '../screen/login_screen.dart';
 import '../screen/approval_management_screen.dart';
 import '../screen/calender_screen.dart';
 
+String? spaceName;
+
 class TabView extends StatefulWidget {
-  const TabView({Key? key}) : super(key: key);
+  final String spaceName;
+  const TabView({super.key, required this.spaceName});
+
 
   @override
   State<TabView> createState() => _TabViewState();
@@ -32,6 +36,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    spaceName = widget.spaceName;
 
     _tabController = TabController(length: _navItems.length, vsync: this);
     _tabController.addListener(tabListener);
@@ -423,7 +428,7 @@ class MenuDialog extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MemberManagementScreen(), // 수정
+                builder: (context) => MemberManagementScreen(spaceName: spaceName!), // 수정
               ),
             );
           },
