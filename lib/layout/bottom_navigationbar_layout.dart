@@ -1,19 +1,19 @@
+import 'dart:async';
 import 'dart:io';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
 import 'package:easybudget/constant/color.dart';
-import 'package:easybudget/database/login_db.dart';
 import 'package:easybudget/screen/chart_screen.dart';
 import 'package:easybudget/screen/mainhome_screen.dart';
 import 'package:easybudget/screen/member_management_screen.dart';
 import 'package:easybudget/screen/receipt_input_screen.dart';
 import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:easybudget/screen/space_setting_screen.dart';
-import 'package:easybudget/database/space_auth_db.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import "package:image_picker/image_picker.dart";
-
-import '../database/space_management_db.dart';
+import 'package:path_provider/path_provider.dart';
 import '../screen/login_screen.dart';
 import '../screen/approval_management_screen.dart';
 import '../screen/calender_screen.dart';
@@ -81,8 +81,8 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
-        children: const [
-          MainhomeScreen(),
+        children:  [
+          MainHomeScreen(),
           ChartScreen(),
           SizedBox(), // Placeholder for Scan Dialog
           CalendarPage(),
@@ -154,6 +154,21 @@ const _navItems = [
   ),
 ];
 
+class OcrResponse {
+  final String status;
+  final String message;
+
+  OcrResponse({required this.status, required this.message});
+
+  factory OcrResponse.fromJson(Map<String, dynamic> json) {
+    return OcrResponse(
+      status: json['status'] ?? '', // null 값을 처리
+      message: json['message'] ?? '', // null 값을 처리
+    );
+  }
+}
+
+
 class ScanDialog extends StatefulWidget {
   const ScanDialog({Key? key}) : super(key: key);
 
@@ -162,25 +177,104 @@ class ScanDialog extends StatefulWidget {
 }
 
 class _ScanDialogState extends State<ScanDialog> {
-  XFile? _image;
- //이미지를 담을 변수 선언
-  final ImagePicker picker = ImagePicker();
- //ImagePicker 초기화
-  Future getImage(ImageSource imageSource) async {
-    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+  final ImagePicker _picker = ImagePicker();
+  File? _image;
+
+  Future<void> getImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+
     if (pickedFile != null) {
-      /*setState(() {
-        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
-      });*/
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ImageDisplayScreen(imageFile: pickedFile),
-        ),
-      );
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      _resizeAndUploadImage(_image!);
     }
   }
+
+  Future<void> _resizeAndUploadImage(File image) async {
+    // 이미지를 크기 조정
+    final bytes = await image.readAsBytes();
+    img.Image? originalImage = img.decodeImage(bytes);
+    img.Image resizedImage = img.copyResize(originalImage!, width: 600);
+
+    // 크기 조정된 이미지를 파일로 저장
+    final resizedImageFile = await _writeToFile(resizedImage);
+
+    // 이미지를 서버로 업로드
+    await uploadImage(resizedImageFile);
+  }
+
+  Future<File> _writeToFile(img.Image image) async {
+    final directory = await getTemporaryDirectory();
+    final imagePath = '${directory.path}/resized_image.jpg';
+    final imageFile = File(imagePath);
+    await imageFile.writeAsBytes(img.encodeJpg(image));
+    return imageFile;
+  }
+
+  Future<void> uploadImage(File imageFile) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('http://192.168.183.168:5000/process_image'),
+    );
+    request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
+    try {
+      final response = await request.send().timeout(Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final respStr = await response.stream.bytesToString();
+        final Map<String, dynamic> jsonResponse = jsonDecode(respStr);
+
+        print('Raw JSON Response: $jsonResponse');  // 응답 출력
+
+        // JSON 응답에서 필요한 데이터 추출
+        final String purchased = jsonResponse['images'][0]['receipt']['result']['storeInfo']['name']['text'] ?? 'Unknown';
+        final String address = jsonResponse['images'][0]['receipt']['result']['storeInfo']['addresses'][0]['text'] ?? 'Unknown';
+        final String date = jsonResponse['images']?[0]?['receipt']?['result']?['paymentInfo']?['date']?['text']?.toString() ?? 'Unknown';
+        final String totalCost = jsonResponse['images']?[0]?['receipt']?['result']?['totalPrice']?['price']?['text']?.toString() ?? 'Unknown';
+
+        final items = jsonResponse['images']?[0]?['receipt']?['result']?['subResults']?[0]?['items'] ?? [];
+
+        // items 배열에서 각 항목의 값을 추출
+        List<Map<String, String>> parsedItems = items.map<Map<String, String>>((item) {
+          final name = item['name']?['text']?.toString() ?? 'Unknown';
+          final count = item['count']?['text']?.toString() ?? 'Unknown';
+          final cost = item['price']?['price']?['text']?.toString() ?? 'Unknown';
+          return {
+            'name': name,
+            'count': count,
+            'cost': cost,
+          };
+        }).toList();
+
+
+        // ReceiptScanConfirmScreen으로 이동하면서 데이터 전달
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ReceiptScanComfirmScreen(
+              purchased: purchased,
+              address: address,
+              date: date,
+              items: parsedItems,
+              totalCost: totalCost,
+            ),
+          ),
+        );
+      } else {
+        print('Failed to upload image, status code: ${response.statusCode}');
+      }
+    } on http.ClientException catch (e) {
+      print('ClientException: $e');
+    } on SocketException catch (e) {
+      print('SocketException: $e');
+    } on TimeoutException catch (e) {
+      print('TimeoutException: $e');
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -188,18 +282,11 @@ class _ScanDialogState extends State<ScanDialog> {
       actions: [
         CupertinoActionSheetAction(
           onPressed: () {
-            // Add your action here
-            /*Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ReceiptScanComfirmScreen(), // 수정
-              ),
-            );*/
             getImage(ImageSource.camera);
           },
           child: Text(
             '영수증 사진 스캔',
-            style: TextStyle(color: blueColor),
+            style: TextStyle(color: Colors.blue),
           ),
         ),
         CupertinoActionSheetAction(
@@ -208,22 +295,21 @@ class _ScanDialogState extends State<ScanDialog> {
           },
           child: Text(
             '앨범에서 선택',
-            style: TextStyle(color: blueColor),
+            style: TextStyle(color: Colors.blue),
           ),
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            // 수기로 작성 클릭 시
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ReceiptInputScreen(), // 수정
+                builder: (context) => ReceiptInputScreen(),
               ),
             );
           },
           child: Text(
             '수기로 작성',
-            style: TextStyle(color: blueColor),
+            style: TextStyle(color: Colors.blue),
           ),
         ),
       ],
@@ -233,34 +319,12 @@ class _ScanDialogState extends State<ScanDialog> {
         },
         child: Text(
           '취소',
-          style: TextStyle(color: blueColor),
+          style: TextStyle(color: Colors.blue),
         ),
       ),
     );
   }
 }
-
-class ImageDisplayScreen extends StatelessWidget {
-  final XFile imageFile;
-
-  const ImageDisplayScreen({Key? key, required this.imageFile}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('이미지 보기'),
-      ),
-      body: Center(
-        child: Image.file(
-          File(imageFile.path),
-          fit: BoxFit.contain,
-        ),
-      ),
-    );
-  }
-}
-
 
 class MenuDialog extends StatelessWidget {
   const MenuDialog({Key? key}) : super(key: key);
@@ -279,8 +343,8 @@ class MenuDialog extends StatelessWidget {
                   title: Text("공유하기"),
                   content: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 5
+                        horizontal: 15,
+                        vertical: 5
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -338,54 +402,51 @@ class MenuDialog extends StatelessWidget {
             style: TextStyle(color: blueColor),
           ),
         ),
-        //if(authorityCheck('$getUserId()', '11aa') == 1)
-          CupertinoActionSheetAction(
-            onPressed: () {
-              // 스페이스 참여 승인 관리 클릭 시 이벤트
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ApprovalManagementScreen(), // 수정
-                ),
-              );
-            },
-            child: Text(
-              '스페이스 참여 승인 관리',
-              style: TextStyle(color: blueColor),
-            ),
+        CupertinoActionSheetAction(
+          onPressed: () {
+            // 스페이스 참여 승인 관리 클릭 시 이벤트
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ApprovalManagementScreen(), // 수정
+              ),
+            );
+          },
+          child: Text(
+            '스페이스 참여 승인 관리',
+            style: TextStyle(color: blueColor),
           ),
-        //if(authorityCheck('$getUserId()', '11aa') == 1)
-          CupertinoActionSheetAction(
-            onPressed: () {
-              // 스페이스 멤버 관리 클릭 시 이벤트
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MemberManagementScreen(), // 수정
-                ),
-              );
-            },
-            child: Text(
-              '스페이스 멤버 관리',
-              style: TextStyle(color: blueColor),
-            ),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {
+            // 스페이스 멤버 관리 클릭 시 이벤트
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MemberManagementScreen(), // 수정
+              ),
+            );
+          },
+          child: Text(
+            '스페이스 멤버 관리',
+            style: TextStyle(color: blueColor),
           ),
-        //if(authorityCheck('$getUserId()', '11aa') == 1)
-          CupertinoActionSheetAction(
-            onPressed: () {
-              // 스페이스 세부 설정 클릭 시 이벤트
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SpaceSettingScreen(), // 수정
-                ),
-              );
-            },
-            child: Text(
-              '스페이스 세부 설정',
-              style: TextStyle(color: blueColor),
-            ),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {
+            // 스페이스 세부 설정 클릭 시 이벤트
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SpaceSettingScreen(), // 수정
+              ),
+            );
+          },
+          child: Text(
+            '스페이스 세부 설정',
+            style: TextStyle(color: blueColor),
           ),
+        ),
       ],
       cancelButton: CupertinoActionSheetAction(
         onPressed: () {

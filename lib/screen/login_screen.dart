@@ -1,18 +1,15 @@
 import 'package:easybudget/constant/color.dart';
-import 'package:easybudget/database/find_db.dart';
 import 'package:easybudget/firebase/category_db.dart';
 import 'package:easybudget/firebase/signup_db.dart';
 import 'package:easybudget/screen/search_ID.dart';
-import 'package:easybudget/screen/signin_screen.dart';
+import 'package:easybudget/screen/signup_screen.dart';
 import 'package:easybudget/screen/space_management_screen.dart';
-import 'package:easybudget/firebase/login_db.dart';
-import 'package:easybudget/database/space_auth_db.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easybudget/screen/search_password.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore 임포트 추가
 import '../firebase/search_db.dart';
-
-import '../database/space_management_db.dart';
+import '../firebase/login_db.dart'; // 로그인 검증 함수가 있는 파일 임포트
 
 final userIdController = TextEditingController();
 final passwordController = TextEditingController();
@@ -61,13 +58,16 @@ class LoginScreen extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () async {
-                    final findingId = await findId('정지용');
-                    Navigator.push(
+                    try {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:(context)=> FindIdScreen(),
-                        )
-                    );
+                          builder: (context) => FindIdScreen(),
+                        ),
+                      );
+                    } catch (e) {
+                      print("Error: $e");
+                    }
                   },
                   child: Text(
                     '아이디 찾기',
@@ -82,8 +82,8 @@ class LoginScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:(context)=> PasswordResetScreen(),
-                      )
+                        builder: (context) => PasswordResetScreen(),
+                      ),
                     );
                   },
                   child: Text(
@@ -99,45 +99,42 @@ class LoginScreen extends StatelessWidget {
             // 로그인 버튼
             ElevatedButton(
               onPressed: () async {
-                saveUserID(userIdController.text);
-                String? userInfo = await searchUser();
-                if(userInfo != '') {
-                  // print(await searchUser());
-                  // print(await searchData());
-                  await appendCategory('event');
-                  print(await getCateName());
-                  
+                final id = userIdController.text.trim();
+                final password = passwordController.text.trim();
+
+                if (id.isEmpty || password.isEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Text('아이디와 비밀번호를 모두 입력해주세요.'),
+                        actions: [
+                          TextButton(
+                            child: Text('닫기'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  );
+                  return;
+                }
+
+                // 로그인 검증 및 사용자 정보 가져오기
+                bool isValid = await validateLogin(id, password); // validateLogin 함수 호출
+
+                if (isValid) {
+                  await loginUser(id, password); // loginUser 함수 호출
+                  await saveUserID(id);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SpaceManagementScreen(), // 수정
+                      builder: (context) => SpaceManagementScreen(userId: id), // 수정
                     ),
                   );
                 } else {
-                  print('failed to login');
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Text('아이디 또는 비밀번호가 올바르지 않습니다!'),
-                          actions: [
-                            TextButton(
-                              child: Text('닫기'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        );
-                      }
-                  );
-                }
-                /*final loginCheck = await login(
-                  userIdController.text, passwordController.text
-                );
-                print(loginCheck);*/
-                /*if (loginCheck == '-1') {
-                  print('failed to login');
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -152,27 +149,17 @@ class LoginScreen extends StatelessWidget {
                           )
                         ],
                       );
-                    }
+                    },
                   );
-                } else {
-                  saveUserID(userIdController.text);
-                  print('로그인 성공');
-                  print(authorityCheck(userIdController.text, '11aa'));
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SpaceManagementScreen(), // 수정
-                    ),
-                  );
-                }*/
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: blueColor,
                 foregroundColor: primaryColor,
                 textStyle: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR'
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'NotoSansKR',
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
@@ -183,7 +170,7 @@ class LoginScreen extends StatelessWidget {
                 '로그인',
               ),
             ),
-            SizedBox(height: 5,),
+            SizedBox(height: 5),
             OutlinedButton(
               onPressed: () {
                 // 회원가입 버튼을 눌렀을 때의 동작 추가
@@ -199,9 +186,9 @@ class LoginScreen extends StatelessWidget {
                 foregroundColor: blueColor,
                 side: BorderSide(color: blueColor),
                 textStyle: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR'
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'NotoSansKR',
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦

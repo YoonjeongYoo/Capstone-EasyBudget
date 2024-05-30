@@ -2,9 +2,35 @@ import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class JoinSpaceScreen extends StatelessWidget {
-  const JoinSpaceScreen({Key? key});
+class JoinSpaceScreen extends StatefulWidget {
+  const JoinSpaceScreen({Key? key}) : super(key: key);
+
+  @override
+  _JoinSpaceScreenState createState() => _JoinSpaceScreenState();
+}
+
+class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchText = '';
+  String? _selectedSpaceName;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchText = _searchController.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +54,7 @@ class JoinSpaceScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextField(
-                      onTap: () {
-                        // TextField를 탭할 때 다른 포커스를 해제하고 키보드를 감춥니다.
-                        FocusScope.of(context).requestFocus(FocusNode());
-                      },
+                      controller: _searchController,
                       decoration: InputDecoration(
                         hintText: '스페이스 검색',
                         prefixIcon: Icon(Icons.search),
@@ -40,8 +63,54 @@ class JoinSpaceScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20), // 검색창과 다른 내용 사이의 간격
-                    // 여기에 스페이스 리스트 등 다른 내용을 추가할 수 있습니다.
+                    SizedBox(height: 20),
+                    if (_searchText.isNotEmpty)
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Space')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+
+                          final spaces = snapshot.data!.docs
+                              .where((doc) {
+                            final name = doc['sname']
+                                .toString()
+                                .toLowerCase()
+                                .contains(_searchText.toLowerCase());
+                            final tags = doc['tag']
+                                .toString()
+                                .toLowerCase()
+                                .contains(_searchText.toLowerCase());
+                            return name || tags;
+                          })
+                              .toList();
+
+                          if (spaces.isEmpty) {
+                            return Center(child: Text('검색 결과가 없습니다.'));
+                          }
+
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: spaces.length,
+                            itemBuilder: (context, index) {
+                              final space = spaces[index];
+                              return ListTile(
+                                title: Text(space['sname']),
+                                onTap: () {
+                                  setState(() {
+                                    _selectedSpaceName = space['sname'];
+                                  });
+                                },
+                                selected: _selectedSpaceName == space['sname'],
+                              );
+                            },
+                          );
+                        },
+                      ),
                   ],
                 ),
               ),
@@ -50,8 +119,16 @@ class JoinSpaceScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    // 스페이스 참가하기 버튼의 동작 추가
+                  onPressed: _selectedSpaceName == null
+                      ? null
+                      : () async {
+                    // Firebase에 스페이스 이름 추가
+                    await FirebaseFirestore.instance
+                        .collection('EnteredSpace')
+                        .add({'sname': _selectedSpaceName});
+
+                    // 뒤로가기 동작 수행
+                    Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: blueColor,
@@ -62,13 +139,11 @@ class JoinSpaceScreen extends StatelessWidget {
                       fontFamily: 'NotoSansKR',
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                      borderRadius: BorderRadius.circular(5),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
+                    padding: EdgeInsets.symmetric(vertical: 15),
                   ),
-                  child: Text(
-                    '스페이스 참가하기',
-                  ),
+                  child: Text('스페이스 참가하기'),
                 ),
               ],
             ),

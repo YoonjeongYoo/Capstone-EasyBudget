@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CostView extends StatelessWidget {
-  final String cost;
+  final String? cost;
 
   const CostView({super.key, required this.cost,});
 

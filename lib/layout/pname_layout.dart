@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PnameView extends StatelessWidget {
-  final String pname;
+  final String? pname;
 
   const PnameView({super.key, required this.pname,});
 

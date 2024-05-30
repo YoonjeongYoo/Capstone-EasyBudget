@@ -6,12 +6,9 @@ class ReceiptLayout extends StatelessWidget {
   final Widget address;
   final Widget pdate;
   final Widget category;
-  final Widget pname;
-  final Widget amount;
-  final Widget cost;
+  final Widget items;
   final Widget totalcost;
   final Widget writer;
-
 
   const ReceiptLayout({
     super.key,
@@ -19,9 +16,7 @@ class ReceiptLayout extends StatelessWidget {
     required this.address,
     required this.pdate,
     required this.category,
-    required this.pname,
-    required this.amount,
-    required this.cost,
+    required this.items,
     required this.totalcost,
     required this.writer,
   });
@@ -189,14 +184,7 @@ class ReceiptLayout extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  pname,
-                  amount,
-                  cost,
-                ],
-              ),
+              child: items
             ),
             Divider(
               color: Color(0xffe9ecef),

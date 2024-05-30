@@ -35,6 +35,7 @@ Future<void> appendCategory(String cname) async {
     await space.doc(await searchSpace(sid!)).collection('Category')
           .doc('categories').update({
         "cname": FieldValue.arrayUnion([data1]),
+
     });
   } catch (e) {
     print('Error occured while adding category item: $e');

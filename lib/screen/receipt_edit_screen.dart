@@ -5,16 +5,31 @@ import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/category_layout.dart';
 import 'package:easybudget/layout/cost_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
+import 'package:easybudget/layout/itmes_layout.dart';
 import 'package:easybudget/layout/pdate_layout.dart';
 import 'package:easybudget/layout/pname_layout.dart';
 import 'package:easybudget/layout/purchased_layout.dart';
 import 'package:easybudget/layout/receipt_layout.dart';
 import 'package:easybudget/layout/totalcost_layout.dart';
 import 'package:easybudget/layout/writer_layout.dart';
+import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:flutter/material.dart';
 
 class ReceiptEditScreen extends StatelessWidget {
-  const ReceiptEditScreen({super.key});
+  final String purchased;
+  final String address;
+  final String date;
+  final List<Map<String, String>> items;
+  final String totalCost;
+
+  const ReceiptEditScreen({
+    super.key,
+    required this.purchased,
+    required this.address,
+    required this.date,
+    required this.items,
+    required this.totalCost
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,24 +51,13 @@ class ReceiptEditScreen extends StatelessWidget {
                 child: _VerificationBox(),
               ),*/
               ReceiptLayout(
-                //purchased: PurchasedView(perchased: '(수원) 222경기대학교 구내 서점',),
-                purchased: PurchasedEdit(existingData: '(수원) 222경기대학교 구내 서점'),
-                //address: AddressView(address: '경기 수원시 영통구 광교산로 154-42',),
-                address: AddressEdit(existingData: '경기 수원시 영통구 광교산로 154-42',),
-                //pdate: PdateView(pdate: '2024-03-13',),
-                pdate: PdateEdit(existingData : '2024-03-13'),
-                //category: CategoryView(category: '식비',),
+                purchased: PurchasedEdit(existingData: purchased),
+                address: AddressEdit(existingData: address,),
+                pdate: PdateEdit(existingData : date),
                 category: CategoryEdit(),
-                //writer: WriterView(name: '유윤정', uid: 'yyj0310',),
                 writer: WriterView(name: '유윤정', uid: 'yyj0310',),
-                //pname: PnameView(pname: '운영체제 10판',),
-                pname: PnameEdit(existingData: '운영체제 10판',),
-                //amount: AmountView(amount: '1',),
-                amount: AmountEdit(existingData: '1',),
-                //cost: CostView(cost: '39,000',),
-                cost: CostEdit(existingData: '39,000',),
-                totalcost: TotalCostView(totalcost: '39,000',),
-                //totalcost: TotalCostView(totalcost: null ),
+                items: ItemsEdit(existingData: items,),
+                totalcost: TotalCostView(totalcost: totalCost,),
               ),
               SizedBox(height: 20,),
               Row(
@@ -61,7 +65,18 @@ class ReceiptEditScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReceiptScanComfirmScreen(
+                            purchased: purchased,
+                            address: address,
+                            date: date,
+                            items: items,
+                            totalCost: totalCost,
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: blueColor,
@@ -77,7 +92,7 @@ class ReceiptEditScreen extends StatelessWidget {
                       padding: EdgeInsets.all(15), // 높이를 5씩 늘림
                     ),
                     child: Text(
-                      '등록',
+                      '저장',
                     ),
                   ),
                 ],

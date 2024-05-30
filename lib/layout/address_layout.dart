@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddressView extends StatelessWidget {
-  final String address;
+  final String? address;
 
   const AddressView({super.key, required this.address,});
 
@@ -27,14 +27,14 @@ class AddressEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController(
+    final TextEditingController addresscontroller = TextEditingController(
       text: existingData,
     );
 
     return Container(
       width: 230,
       child: TextField(
-        controller: _controller,
+        controller: addresscontroller,
         decoration: InputDecoration(
           hintText: existingData == null || existingData!.isEmpty
               ? '주소를 입력하세요'
