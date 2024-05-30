@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:easybudget/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:easybudget/screen/space_management_screen.dart';
+//import 'package:easybudget/screen/join_space_screen.dart';
 // import 'package:easybudget/screen/create_space_screen.dart';
 // import 'package:easybudget/screen/create_space_testscreen.dart';
 // import 'firebase_options.dart';
@@ -12,7 +12,7 @@ import 'package:easybudget/screen/space_management_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 위젯 바인딩 초기화
-  await initializeDateFormatting(); // 날짜 형식 초기화
+  await initializeDateFormatting(); // 날짜 형식 초기화ㅉ
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   ); // Firebase 초기화
@@ -48,7 +48,8 @@ void main() async {
       ),
       //home: TabView(),
       //home: LogoScreen(),
-      home: SpaceManagementScreen(),
+      home: LogoScreen(),
+      //home: SpaceManagementScreen(),
        // home: JoinSpaceScreen(),
       //  home: CreateSpaceWidget(),
     ),
