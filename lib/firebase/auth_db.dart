@@ -1,47 +1,47 @@
-import 'dart:collection';
-
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firebase/search_db.dart';
 import '../firebase/login_db.dart';
 
-Future<void> authCheck() async {
+Future<int?> authCheck() async {
   final db = FirebaseFirestore.instance;
+  final user = db.collection('User');
   final sid = await getSpaceId();
   final uid = await getUserId();
-  String? auth;
+  String? docid;
+  int? auth;
 
-  dynamic val = await db.collection('User')
-                    .where('uid', isEqualTo: uid)
-                    .get();
-
-  print("Fetching cname data...");
-//TODO *******************************************************8
   try {
-    LinkedHashMap<String, dynamic> data = val['entered'];
-
-    List<dynamic> values = data.values.toList();
-
-    for(int i = 0;i < values.length; i++) {
-      list.add()
-    }
+    await user
+          .doc(await searchUser(uid!))
+          .collection('entered')
+          .where('sid', isEqualTo: "11bb") // need to set sid from saveSpaceId
+          .get()
+          .then((value) {
+      for (var element in value.docs) {
+        //print(element.id);
+          docid = element.id;
+      }
+    });
+    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await user
+        .doc(await searchUser(uid))
+        .collection('entered')
+        .doc(docid!)
+        .get();
 
     if (docSnapshot.exists) {
-      List<dynamic>? cnameList = docSnapshot.data()?['cname'];
-      if (cnameList != null && cnameList.isNotEmpty) {
-        //print('cname List:');
-        for (auth in cnameList) {
-          //print(cname);
-          if(auth=='event') {break;}
+      auth = docSnapshot.data()?['auth'];
+      if (auth != null) {
+        print('auth: $auth');
         }
       } else {
-        print('cname field is empty or does not exist.');
+        print('auth field is empty.');
       }
-    } else {
-      print('Document does not exist.');
-    }
+
   } catch (e) {
-    print('Error fetching cname data: $e');
+    print('Error occurred while checking authority: $e');
   } finally {
-    print('Finished fetching cname data.');
+    print('successfully checked authority');
   }
+  return auth;
 }

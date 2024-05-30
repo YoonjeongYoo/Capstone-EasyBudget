@@ -1,18 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firebase/login_db.dart';
 
-Future<String?> searchUser() async {
+Future<String?> searchUser(String uid) async {
   print("searching user...");
   final db = FirebaseFirestore.instance;
-  late String res = '';
   late String docid = '';
+
   try {
-    await getUserId().then((value) {
-      res = value.toString();
-    });
 
     await db.collection("User")
-        .where("uid", isEqualTo: res)
+        .where("uid", isEqualTo: uid)
         .get()
         .then((value) {
       for (var element in value.docs) {
