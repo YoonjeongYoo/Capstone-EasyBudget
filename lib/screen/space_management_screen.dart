@@ -79,7 +79,7 @@ class SpaceManagementScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: spaceSnapshot.data!.docs.map((document) {
-                            return _SpaceContainer(name: document['sname']);
+                            return _SpaceContainer(name: document['sname'], sid: document['sid']);
                           }).toList(),
                         ),
                       );
@@ -161,7 +161,8 @@ class SpaceManagementScreen extends StatelessWidget {
 
 class _SpaceContainer extends StatelessWidget {
   final String name;
-  const _SpaceContainer({super.key, required this.name});
+  final String sid;
+  const _SpaceContainer({super.key, required this.name, required this.sid});
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +198,9 @@ class _SpaceContainer extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  print(sid);
+                  await saveSpaceId(sid);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

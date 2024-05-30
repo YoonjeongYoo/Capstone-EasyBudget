@@ -1,4 +1,5 @@
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/firebase/auth_db.dart';
 import 'package:easybudget/firebase/category_db.dart';
 import 'package:easybudget/firebase/signup_db.dart';
 import 'package:easybudget/screen/search_ID.dart';
@@ -127,7 +128,7 @@ class LoginScreen extends StatelessWidget {
 
                 if (isValid) {
                   await loginUser(id, password); // loginUser 함수 호출
-                  await saveUserID(id);
+                  await saveUserId(id);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
