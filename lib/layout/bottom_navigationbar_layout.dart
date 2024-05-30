@@ -14,7 +14,7 @@ import 'package:easybudget/screen/receipt_input_screen.dart';
 import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:easybudget/screen/space_setting_screen.dart';
 import 'package:path_provider/path_provider.dart';
-import '../screen/login_screen.dart';
+//import '../screen/login_screen.dart';
 import '../screen/approval_management_screen.dart';
 import '../screen/calender_screen.dart';
 

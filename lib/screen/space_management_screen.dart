@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../firebase/login_db.dart';
+//import '../firebase/login_db.dart';
 import '../firebase/search_db.dart'; // getUserSpaces 함수를 사용하기 위해 import
 
 class SpaceManagementScreen extends StatelessWidget {
