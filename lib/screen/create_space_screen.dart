@@ -81,9 +81,6 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
         'sTotalBudget' : spaceBudget,
       });
 
-      await FirebaseFirestore.instance.collection('EnteredSpace').add({
-        'sname': spaceName,
-      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('스페이스가 성공적으로 생성되었습니다.')),
