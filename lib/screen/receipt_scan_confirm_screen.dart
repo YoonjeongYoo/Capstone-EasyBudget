@@ -139,9 +139,9 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
     // 아이템 변환
     List<Map<String, dynamic>> itemsData = items.map((item) {
       return {
-        'amount': int.parse(item['count']!.replaceAll(',', '')),
+        'count': int.parse(item['count']!.replaceAll(',', '')),
         'cost': item['cost']!.replaceAll(',', ''),
-        'item_name': item['name'],
+        'name': item['name'],
       };
     }).toList();
 
