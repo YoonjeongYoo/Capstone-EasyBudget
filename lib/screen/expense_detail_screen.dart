@@ -13,7 +13,8 @@ import 'package:easybudget/layout/receipt_layout.dart';
 import 'package:easybudget/layout/totalcost_layout.dart';
 import 'package:easybudget/layout/writer_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Timestamp 클래스를 사용하기 위해 추가
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart'; // NumberFormat 클래스를 사용하기 위해 추가
 
 class ExpenseDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> expense;
@@ -21,19 +22,21 @@ class ExpenseDetailsScreen extends StatelessWidget {
   const ExpenseDetailsScreen({Key? key, required this.expense}) : super(key: key);
 
   Future<List<Map<String, String>>> _fetchItems() async {
-    // Firestore에서 items를 가져옵니다.
     final itemsSnapshot = await FirebaseFirestore.instance
         .collection('Space')
         .doc('KBpkiTfmpsg3ZI5iSpyY')
         .collection('Receipt')
-        .doc(expense['id']) // 각 영수증의 고유 ID가 있다고 가정
+        .doc(expense['id'])
         .collection('Item')
         .get();
 
-    // 데이터를 Map의 List로 변환하고, 모든 값들을 문자열로 변환합니다.
     List<Map<String, String>> itemsList = itemsSnapshot.docs.map((doc) {
       final data = doc.data();
-      return data.map((key, value) => MapEntry(key, value.toString())); // 모든 값을 문자열로 변환
+      // cost를 쉼표(,)가 포함된 문자열로 변환
+      if (data.containsKey('cost')) {
+        data['cost'] = NumberFormat('#,##0').format(int.parse(data['cost'].toString()));
+      }
+      return data.map((key, value) => MapEntry(key, value.toString()));
     }).toList();
 
     return itemsList;
@@ -41,10 +44,7 @@ class ExpenseDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    // Timestamp를 DateTime으로 변환
-    DateTime pdate = (expense['date'] as Timestamp?)?.toDate() ?? DateTime.now(); // null 체크 추가
-    // 원하는 형식으로 DateTime을 문자열로 변환
+    DateTime pdate = (expense['date'] as Timestamp?)?.toDate() ?? DateTime.now();
     String formattedPdate = '${pdate.year}-${pdate.month.toString().padLeft(2, '0')}-${pdate.day.toString().padLeft(2, '0')}';
 
     return DefaultLayout(
@@ -80,9 +80,9 @@ class ExpenseDetailsScreen extends StatelessWidget {
                     }
                   },
                 ),
-                totalcost: TotalCostView(totalcost: '${expense['cost']}',),
+                totalcost: TotalCostView(totalcost: NumberFormat('#,##0').format(int.parse(expense['cost'].toString()))),
               ),
-              SizedBox(height: 20,),
+              /*SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -102,11 +102,11 @@ class ExpenseDetailsScreen extends StatelessWidget {
                       padding: EdgeInsets.all(15), // 높이를 5씩 늘림
                     ),
                     child: Text(
-                      '등록',
+                      '사진 확인',
                     ),
                   ),
                 ],
-              ),
+              ),*/
             ],
           ),
         ),
