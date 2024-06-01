@@ -1,3 +1,4 @@
+import 'package:easybudget/firebase/find_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,8 @@ class PasswordResetScreen extends StatefulWidget {
 }
 
 class _PasswordResetScreenState extends State<PasswordResetScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
   bool _isSendCodeButtonEnabled = false;
@@ -58,6 +60,8 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     _phoneController.removeListener(_formatPhoneNumber);
     _phoneController.removeListener(_updateSendCodeButtonState);
     _codeController.removeListener(_updateNextButtonState);
+    _idController.dispose();
+    _nameController.dispose();
     _phoneController.dispose();
     _codeController.dispose();
     super.dispose();
@@ -77,6 +81,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
             children: [
               SizedBox(height: 16.0),
               TextField(
+                controller: _idController,
                 decoration: InputDecoration(
                   labelText: '아이디',
                   border: OutlineInputBorder(),
@@ -85,6 +90,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
+                controller: _nameController,
                 decoration: InputDecoration(
                   labelText: '이름',
                   border: OutlineInputBorder(),
@@ -145,6 +151,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   onPressed: _isNextButtonEnabled
                       ? () {
                     // 다음 버튼 로직 추가
+                    findPw(_idController.text, _nameController.text);
                   }
                       : null,
                   style: ElevatedButton.styleFrom(

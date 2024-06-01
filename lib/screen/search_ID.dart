@@ -2,6 +2,7 @@ import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
+import '../firebase/find_db.dart';
 
 class FindIdScreen extends StatefulWidget {
   @override
@@ -37,10 +38,11 @@ class _FindIdScreenState extends State<FindIdScreen> {
                 ),
                 SizedBox(height: 20.0),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // 검색 버튼 클릭 이벤트 처리. 검색 로직을 여기에 구현.
                     print("검색 버튼 클릭됨: ${_controller.text}");
                     // 검색 로직을 여기에 구현하세요.
+                    await findId(_controller.text);
                   },
                   child: Text('검색'),
                   style: ElevatedButton.styleFrom(
