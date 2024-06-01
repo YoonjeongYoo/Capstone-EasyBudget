@@ -137,16 +137,28 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
     String image = DateTime.now().millisecondsSinceEpoch.toString();
 
     // 아이템 변환
-    List<Map<String, dynamic>> itemsData = items.map((item) {
-      return {
-        'count': int.parse(item['count']!.replaceAll(',', '')),
-        'cost': item['cost']!.replaceAll(',', ''),
-        'name': item['name'],
-      };
-    }).toList();
+    List<Map<String, dynamic>> itemsData;
+    try {
+      itemsData = items.map((item) {
+        return {
+          'count': int.parse(item['count']!.replaceAll(',', '')),
+          'cost': item['cost']!.replaceAll(',', ''),
+          'name': item['name'],
+        };
+      }).toList();
+    } catch (e) {
+      _showErrorDialog(context, '숫자 형식 오류', '상품의 수량은 숫자만 입력해주세요.');
+      return;
+    }
 
     // 날짜 문자열 변환
-    DateTime parsedDate = _parseDateString(date);
+    DateTime parsedDate;
+    try {
+      parsedDate = _parseDateString(date);
+    } catch (e) {
+      _showErrorDialog(context, '날짜 형식 오류', '올바른 날짜 형식으로 입력해주세요.\n 예) yyyy-mm-dd');
+      return;
+    }
 
     try {
       // 영수증 데이터 추가
@@ -184,8 +196,24 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('등록 완료'),
-          content: Text('영수증이 성공적으로 등록되었습니다.'),
+          title: Text(
+            '등록 완료',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'NotoSansKR'
+            ),
+          ),
+          content: Text(
+            '영수증이 성공적으로 등록되었습니다.',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'NotoSansKR'
+            ),
+          ),
           actions: <Widget>[
             TextButton(
               child: Text('확인'),
@@ -205,9 +233,69 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
     );
   }
 
+  void _showErrorDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            title,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'NotoSansKR'
+            ),
+          ),
+          content: Text(
+            content,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'NotoSansKR'
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dialog 닫기
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   DateTime _parseDateString(String dateString) {
     // 입력된 날짜 문자열을 DateTime 형식으로 변환
-    final DateFormat format = DateFormat('yyyy/MM/dd(EEE)', 'ko');
-    return format.parse(dateString);
+    final List<DateFormat> dateFormats = [
+      DateFormat('yyyy/MM/dd(EEE)', 'ko'),
+      DateFormat('yyyy-MM-dd', 'ko'),
+      DateFormat('yyyy/MM/dd [E]', 'ko'),
+      DateFormat('yyyy/MM/dd', 'ko')
+    ];
+
+    for (var format in dateFormats) {
+      try {
+        return format.parse(dateString);
+      } catch (e) {
+        // Ignore and try the next format
+      }
+    }
+
+    // Fallback: Extract year, month, day manually
+    final RegExp regex = RegExp(r'^(\d{4})[/-](\d{2})[/-](\d{2})');
+    final match = regex.firstMatch(dateString);
+    if (match != null) {
+      final year = int.parse(match.group(1)!);
+      final month = int.parse(match.group(2)!);
+      final day = int.parse(match.group(3)!);
+      return DateTime(year, month, day);
+    }
+
+    throw FormatException('Invalid date format: $dateString');
   }
 }
