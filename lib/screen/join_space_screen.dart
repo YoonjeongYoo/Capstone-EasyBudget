@@ -144,9 +144,11 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                           .where('sname', isEqualTo: _selectedSpaceName)
                           .get().then((value) async {
                             for(var element in value.docs) {
-                              sdocid = await searchSpace(element.id);
+                              sdocid = element.id;
+                              print(sdocid);
                             }
                           }); // 사용자가 선택한 스페이스의 문서 아이디 검색
+                    final sid = await getSid(sdocid!);
 
                     final data1 = <String, dynamic> {
                       'uid': currentUserid,
@@ -154,14 +156,14 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                     }; // 현재 사용자의 아이디, 권한
 
                     final data2 = <String, dynamic> {
-                      'sid': sdocid,
+                      'sid': sid,
                       'authority': 2,
                     }; // 사용자가 가입한 스페이스 아이디, 스페이스에서의 권한
 
                     await FirebaseFirestore.instance
                           .collection('Space')
                           .doc(sdocid)
-                          .collection('member')
+                          .collection('Member')
                           .add(data1); // data1을 스페이스의 member 서브 컬렉션에 저장
 
                     await FirebaseFirestore.instance

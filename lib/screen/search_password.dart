@@ -149,9 +149,11 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: _isNextButtonEnabled
-                      ? () {
+                      ? () async {
                     // 다음 버튼 로직 추가
-                    findPw(_idController.text, _nameController.text);
+                    final foundPw = await findPw(_idController.text, _nameController.text);
+                    print(foundPw);
+
                   }
                       : null,
                   style: ElevatedButton.styleFrom(

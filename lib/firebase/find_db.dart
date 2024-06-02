@@ -19,12 +19,10 @@ Future<String?> findId(String phone) async {
         .get();
 
     if (docSnapshot.exists) {
-      List<dynamic>? uid = docSnapshot.data()?['uid'];
-      if (uid != null && uid.isNotEmpty) {
-        //print('cname List:');
-        for (identifier in uid) {
-          print(identifier); // 디버그용 출력문
-        }
+      final uid = docSnapshot.data()?['uid'];
+      if (uid != null) {
+        identifier = uid;
+        print(identifier);
       } else {
         print('uid field is empty or does not exist.');
       }
@@ -62,12 +60,9 @@ Future<String?> findPw(String uid, String uname) async {
         .get();
 
     if (docSnapshot.exists) {
-      List<dynamic>? password = docSnapshot.data()?['pw'];
-      if (password != null && password.isNotEmpty) {
-        //print('cname List:');
-        for (identifier in password) {
-          print(identifier); // 디버그용 출력문
-        }
+      final password = docSnapshot.data()?['pw'];
+      if (password != null) {
+        identifier = password;
       } else {
         print('pw field is empty or does not exist.');
       }

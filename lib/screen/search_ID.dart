@@ -42,7 +42,8 @@ class _FindIdScreenState extends State<FindIdScreen> {
                     // 검색 버튼 클릭 이벤트 처리. 검색 로직을 여기에 구현.
                     print("검색 버튼 클릭됨: ${_controller.text}");
                     // 검색 로직을 여기에 구현하세요.
-                    await findId(_controller.text);
+                    final foundId = await findId(_controller.text);
+                    print(foundId);
                   },
                   child: Text('검색'),
                   style: ElevatedButton.styleFrom(
