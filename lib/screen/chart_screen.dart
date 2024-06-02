@@ -23,7 +23,7 @@ class _ChartScreenState extends State<ChartScreen> {
   Map<String, double> expenses = {};
   Map<String, double> budgets = {};
 
-  String selectedDate = '2023-05';
+  String selectedDate = '2023-07';
   List<String> dateOptions = [];
 
   @override
@@ -33,8 +33,20 @@ class _ChartScreenState extends State<ChartScreen> {
     fetchDataFromFirestore(); // Firestore에서 데이터 불러오기
   }
 
+  List<String> _getLast12Months() {
+    List<String> last12Months = [];
+    DateTime now = DateTime.now();
+    for (int i = 11; i >= 0; i--) {
+      DateTime date = DateTime(now.year, now.month - i, 1);
+      String formattedDate = '${date.year}-${date.month.toString().padLeft(2, '0')}';
+      last12Months.add(formattedDate);
+    }
+    return last12Months;
+  }
+
   Future<void> fetchDataFromFirestore() async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+    List<String> last12Months = _getLast12Months();
 
     try {
       // BudgetAnalysis 데이터 불러오기
@@ -66,6 +78,7 @@ class _ChartScreenState extends State<ChartScreen> {
           .collection('Chart')
           .doc('BudgetAnalysis')
           .collection('DatewiseData')
+          .where(FieldPath.documentId, whereIn: last12Months)
           .get();
 
       Map<String, Map<String, double>> tempData = {};
@@ -109,7 +122,7 @@ class _ChartScreenState extends State<ChartScreen> {
         }
 
         Color getProgressBarColor(double percentage, double threshold) {
-          return percentage > threshold ? Colors.red : Colors.lightBlue;
+          return percentage >= threshold ? Colors.red : Colors.lightBlue;
         }
 
         return Column(
@@ -178,7 +191,7 @@ class _ChartScreenState extends State<ChartScreen> {
                             child: GFProgressBar(
                               percentage: expense / budget,
                               backgroundColor: Colors.grey.shade200,
-                              progressBarColor: getProgressBarColor(expense / budget, 0.8),
+                              progressBarColor: getProgressBarColor(expense / budget, 0.9),
                               lineHeight: 20,
                               alignment: MainAxisAlignment.spaceBetween,
                               trailing: Text('${(expense / budget * 100).toStringAsFixed(1)}%'),
@@ -194,13 +207,13 @@ class _ChartScreenState extends State<ChartScreen> {
         );
 
       case '날짜별':
-      // 디버깅 코드 추가
         print('selectedDate: $selectedDate');
         print('_selectedData: $_selectedData');
         print('dateData: $dateData');
 
-        List<FlSpot> lineSpots = List.generate(dateOptions.length, (index) {
-          String selectedMonth = dateOptions[index];
+        List<String> last12Months = _getLast12Months();
+        List<FlSpot> lineSpots = List.generate(12, (index) {
+          String selectedMonth = last12Months[index];
           double total = dateData[selectedMonth]?.values.reduce((a, b) => a + b) ?? 0.0;
           return FlSpot(index.toDouble(), total);
         });
@@ -218,7 +231,7 @@ class _ChartScreenState extends State<ChartScreen> {
         }
 
         double calculateInterval() {
-          final double maxY = lineSpots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
+          final double maxY = lineSpots.isNotEmpty ? lineSpots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) : 1;
           return (maxY / 5) > 0 ? maxY / 5 : 1;
         }
 
@@ -394,20 +407,17 @@ class _ChartScreenState extends State<ChartScreen> {
                           showTitles: true,
                           interval: 1,
                           getTitlesWidget: (value, meta) {
-                            if (value.toInt() >= 0 && value.toInt() < dateOptions.length) {
-                              // 2개 중 1개만 레이블을 표시
+                            if (value.toInt() >= 0 && value.toInt() < last12Months.length) {
                               if (value.toInt() % 2 == 0) {
                                 return Transform.rotate(
                                   angle: 0 * 3.1415927 / 180,
                                   child: Text(
-                                    dateOptions[value.toInt()]
-                                        .replaceFirst('년 ', '.')
-                                        .replaceFirst('월', ''),
+                                    last12Months[value.toInt()],
                                     style: TextStyle(fontSize: 10),
                                   ),
                                 );
                               } else {
-                                return SizedBox.shrink();
+                                return Text('');
                               }
                             }
                             return Text('');
