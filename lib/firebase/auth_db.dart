@@ -8,6 +8,7 @@ Future<int?> authCheck() async {
   final user = db.collection('User');
   final sid = await getSpaceId();
   final uid = await getUserId();
+
   String? docid;
   int? auth;
 
@@ -52,6 +53,7 @@ Future<void> authUpdate(int auth) async {
   final sid = await getSpaceId();
   final uid = await getUserId();
   String? docid;
+
   final data1 = <String, dynamic>{
     'auth': auth,
   };
