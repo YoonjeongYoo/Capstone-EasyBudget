@@ -132,7 +132,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
       appbar: AppbarLayout(
         title: '스페이스 생성하기',
         action: [
-          Padding(
+          /*Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
               onPressed: () {
@@ -146,7 +146,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
               icon: Icon(CupertinoIcons.person_crop_circle_fill),
               iconSize: 30,
             ),
-          ),
+          ),*/
         ],
       ),
       body: Padding(

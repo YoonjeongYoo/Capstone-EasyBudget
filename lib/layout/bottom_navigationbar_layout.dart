@@ -22,7 +22,9 @@ String? spaceName;
 
 class TabView extends StatefulWidget {
   final String spaceName;
-  const TabView({super.key, required this.spaceName});
+  final String userId; // userId를 받기 위한 변수 추가
+
+  const TabView({super.key, required this.spaceName, required this.userId});
 
 
   @override
@@ -87,7 +89,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
         children:  [
-          MainHomeScreen(spaceName:spaceName), // 여기에 spacename 넘기기 spaceName:spaceName
+          MainHomeScreen(spaceName:spaceName, userId: widget.userId,), // 여기에 spacename 넘기기 spaceName:spaceName
           ChartScreen(),    // 여기에 spacename 넘기기
           SizedBox(), // Placeholder for Scan Dialog
           CalendarPage(spaceName:spaceName),   // 여기에 spacename 넘기기
@@ -100,7 +102,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   void _showDialog(BuildContext context, int tabIndex) {
     Widget dialog;
     if (tabIndex == 2) {
-      dialog = ScanDialog();
+      dialog = ScanDialog(userId: widget.userId,);
     } else {
       dialog = MenuDialog();
     }
@@ -175,7 +177,8 @@ class OcrResponse {
 
 
 class ScanDialog extends StatefulWidget {
-  const ScanDialog({Key? key}) : super(key: key);
+  final String userId;
+  const ScanDialog({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<ScanDialog> createState() => _ScanDialogState();
@@ -218,6 +221,17 @@ class _ScanDialogState extends State<ScanDialog> {
   }
 
   Future<void> uploadImage(File imageFile) async {
+    // 로딩 다이얼로그 표시
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(color: blueColor,),
+        );
+      },
+    );
+
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('http://192.168.183.168:5000/process_image'),
@@ -231,8 +245,6 @@ class _ScanDialogState extends State<ScanDialog> {
         final respStr = await response.stream.bytesToString();
         final Map<String, dynamic> jsonResponse = jsonDecode(respStr);
 
-        print('Raw JSON Response: $jsonResponse');  // 응답 출력
-
         // JSON 응답에서 필요한 데이터 추출
         final String purchased = jsonResponse['images'][0]['receipt']['result']['storeInfo']['name']['text'] ?? 'Unknown';
         final String address = jsonResponse['images'][0]['receipt']['result']['storeInfo']['addresses'][0]['text'] ?? 'Unknown';
@@ -241,7 +253,6 @@ class _ScanDialogState extends State<ScanDialog> {
 
         final items = jsonResponse['images']?[0]?['receipt']?['result']?['subResults']?[0]?['items'] ?? [];
 
-        // items 배열에서 각 항목의 값을 추출
         List<Map<String, String>> parsedItems = items.map<Map<String, String>>((item) {
           final name = item['name']?['text']?.toString() ?? 'Unknown';
           final count = item['count']?['text']?.toString() ?? 'Unknown';
@@ -253,12 +264,14 @@ class _ScanDialogState extends State<ScanDialog> {
           };
         }).toList();
 
+        // 로딩 다이얼로그 닫기
+        Navigator.pop(context);
 
-        // ReceiptScanConfirmScreen으로 이동하면서 데이터 전달
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ReceiptScanComfirmScreen(
+              userId: widget.userId,
               purchased: purchased,
               address: address,
               date: date,
@@ -270,13 +283,21 @@ class _ScanDialogState extends State<ScanDialog> {
         );
       } else {
         print('Failed to upload image, status code: ${response.statusCode}');
+        // 로딩 다이얼로그 닫기
+        Navigator.pop(context);
       }
     } on http.ClientException catch (e) {
       print('ClientException: $e');
+      // 로딩 다이얼로그 닫기
+      Navigator.pop(context);
     } on SocketException catch (e) {
       print('SocketException: $e');
+      // 로딩 다이얼로그 닫기
+      Navigator.pop(context);
     } on TimeoutException catch (e) {
       print('TimeoutException: $e');
+      // 로딩 다이얼로그 닫기
+      Navigator.pop(context);
     }
   }
 
@@ -309,7 +330,7 @@ class _ScanDialogState extends State<ScanDialog> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ReceiptInputScreen(),
+                builder: (context) => ReceiptInputScreen(userId: widget.userId,),
               ),
             );
           },

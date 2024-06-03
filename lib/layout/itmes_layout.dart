@@ -98,6 +98,17 @@ class ItemsEditState extends State<ItemsEdit> {
     });
   }
 
+  // getItems 메서드를 추가합니다.
+  List<Map<String, String>> getItems() {
+    return controllers.map((controller) {
+      return {
+        'name': controller['name']!.text,
+        'count': controller['count']!.text,
+        'cost': controller['cost']!.text,
+      };
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

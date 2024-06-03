@@ -102,6 +102,7 @@ class LoginScreen extends StatelessWidget {
               onPressed: () async {
                 final id = userIdController.text.trim();
                 final password = passwordController.text.trim();
+                print(id);
 
                 if (id.isEmpty || password.isEmpty) {
                   showDialog(

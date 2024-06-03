@@ -228,3 +228,36 @@ Future<List<String>> getUserSpaces(String userId) async {
   }
   return [];
 }
+
+Future<String?> getSid(String docid) async {
+  final db = FirebaseFirestore.instance;
+  String? spaceId;
+  print("Fetching space id...");
+
+  try {
+    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await db
+        .collection('Space')
+        .doc(docid)
+        .get();
+
+    if (docSnapshot.exists) {
+      final sid = docSnapshot.data()?['sid'];
+      if (sid != null) {
+        //print('cname List:');
+        spaceId = sid;
+        print(spaceId);
+
+      } else {
+        print('sid field is empty or does not exist.');
+      }
+    } else {
+      print('Document does not exist.');
+    }
+  } catch (e) {
+    print('Error fetching space id: $e');
+  } finally {
+    print('Finished fetching space id.');
+  }
+
+  return spaceId;
+}

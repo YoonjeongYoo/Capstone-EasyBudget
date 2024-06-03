@@ -1,6 +1,9 @@
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/firebase/login_db.dart';
+import 'package:easybudget/firebase/search_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -122,10 +125,52 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                   onPressed: _selectedSpaceName == null
                       ? null
                       : () async {
-                    // Firebase에 스페이스 이름 추가
+                    final currentUserid = await getUserId(); // 현재 로그인된 사용자 아이디
+                    String? udocid = '';
+
                     await FirebaseFirestore.instance
-                        .collection('EnteredSpace')
-                        .add({'sname': _selectedSpaceName});
+                          .collection('User')
+                          .where('uid', isEqualTo: currentUserid)
+                          .get().then((value) {
+                            for(var element in value.docs) {
+                              udocid = element.id;
+                            }
+                          }); // 현재 사용자의 문서 아이디 검색
+
+
+                    String? sdocid = '';
+                    await FirebaseFirestore.instance
+                          .collection('Space')
+                          .where('sname', isEqualTo: _selectedSpaceName)
+                          .get().then((value) async {
+                            for(var element in value.docs) {
+                              sdocid = element.id;
+                              print(sdocid);
+                            }
+                          }); // 사용자가 선택한 스페이스의 문서 아이디 검색
+                    final sid = await getSid(sdocid!);
+
+                    final data1 = <String, dynamic> {
+                      'uid': currentUserid,
+                      'authority': 2,
+                    }; // 현재 사용자의 아이디, 권한
+
+                    final data2 = <String, dynamic> {
+                      'sid': sid,
+                      'authority': 2,
+                    }; // 사용자가 가입한 스페이스 아이디, 스페이스에서의 권한
+
+                    await FirebaseFirestore.instance
+                          .collection('Space')
+                          .doc(sdocid)
+                          .collection('Member')
+                          .add(data1); // data1을 스페이스의 member 서브 컬렉션에 저장
+
+                    await FirebaseFirestore.instance
+                          .collection('User')
+                          .doc(udocid)
+                          .collection('entered')
+                          .add(data2); // data2를 entered 서브컬렉션에 저장
 
                     // 뒤로가기 동작 수행
                     Navigator.of(context).pop();

@@ -11,8 +11,8 @@ import 'package:intl/intl.dart'; // NumberFormat을 사용하기 위해 임포�
 class MainHomeScreen extends StatelessWidget {
   // const MainHomeScreen({super.key});
   final String? spaceName;
-  const MainHomeScreen({super.key, required this.spaceName});
-
+  final String userId; // userId를 받기 위한 변수 추가
+  const MainHomeScreen({super.key, required this.spaceName, required this.userId}});
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
@@ -41,7 +41,7 @@ class MainHomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MypageScreen(), // 수정
+                        builder: (context) => MypageScreen(userId: userId,), // 수정
                       ),
                     );
                   },
