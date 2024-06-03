@@ -16,6 +16,10 @@ import 'package:intl/intl.dart';
 import 'dart:math';
 
 class ReceiptInputScreen extends StatelessWidget {
+  final String userId;
+
+  const ReceiptInputScreen({super.key, required this.userId}); // 로그인 후 저장된 사용자 ID
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController purchasedController = TextEditingController();
@@ -136,6 +140,7 @@ class ReceiptInputScreen extends StatelessWidget {
         'purchased': purchased,
         'totalCost': int.parse(totalCost.replaceAll(',', '')),
         'writer': writer,
+        'processed' : false,
       });
 
       print('영수증 추가 완료: ${newReceipt.id}');
@@ -188,7 +193,7 @@ class ReceiptInputScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TabView(spaceName: '',), // TabView 위젯으로 이동
+                    builder: (context) => TabView(spaceName: '', userId: userId,), // TabView 위젯으로 이동
                   ),
                 );
               },

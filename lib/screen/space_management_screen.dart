@@ -33,7 +33,7 @@ class SpaceManagementScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MypageScreen(), // 수정
+                    builder: (context) => MypageScreen(userId: userId), // userId를 전달
                   ),
                 );
               },
@@ -80,7 +80,7 @@ class SpaceManagementScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: spaceSnapshot.data!.docs.map((document) {
-                            return _SpaceContainer(name: document['sname'], sid: document['sid']);
+                            return _SpaceContainer(name: document['sname'], sid: document['sid'], userId: userId,);
                           }).toList(),
                         ),
                       );
@@ -163,7 +163,8 @@ class SpaceManagementScreen extends StatelessWidget {
 class _SpaceContainer extends StatelessWidget {
   final String name;
   final String sid;
-  const _SpaceContainer({super.key, required this.name, required this.sid});
+  final String userId; // userId를 받기 위한 변수 추가
+  const _SpaceContainer({super.key, required this.name, required this.sid, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +206,7 @@ class _SpaceContainer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TabView(spaceName: name), // 수정
+                      builder: (context) => TabView(spaceName: name, userId: userId,), // 수정
                     ),
                   );
                 },
