@@ -18,6 +18,7 @@ import 'dart:math'; // 랜덤 값을 생성하기 위해 추가
 import 'receipt_edit_screen.dart';
 
 class ReceiptScanComfirmScreen extends StatelessWidget {
+  final String userId;
   final String purchased;
   final String address;
   final String date;
@@ -27,12 +28,13 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
 
   const ReceiptScanComfirmScreen({
     super.key,
+    required this.userId,
     required this.purchased,
     required this.address,
     required this.date,
     required this.category,
     required this.items,
-    required this.totalCost
+    required this.totalCost,
   });
 
   @override
@@ -71,6 +73,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ReceiptEditScreen(
+                            userId: userId,
                             purchased: purchased,
                             address: address,
                             date: date,
@@ -171,6 +174,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
         'purchased': purchased,
         'totalCost': int.parse(totalCost.replaceAll(',', '')),
         'writer': 'yyj0310',
+        'processed' : false,
       });
 
       print('영수증 추가 완료: ${newReceipt.id}');
@@ -222,7 +226,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TabView(spaceName: '',), // TabView 위젯으로 이동
+                    builder: (context) => TabView(spaceName: '', userId: userId,), // TabView 위젯으로 이동
                   ),
                 );
               },

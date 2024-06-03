@@ -2,9 +2,22 @@ import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/screen/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MypageScreen extends StatelessWidget {
-  const MypageScreen({Key? key}) : super(key: key);
+  final String userId; // userId를 받기 위한 변수 추가
+
+  const MypageScreen({Key? key, required this.userId}) : super(key: key);
+
+  Future<String> getUserName(String userId) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('User')
+        .where('uid', isEqualTo: userId)
+        .limit(1)
+        .get()
+        .then((querySnapshot) => querySnapshot.docs.first);
+    return userDoc['uname'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +35,30 @@ class MypageScreen extends StatelessWidget {
             SizedBox(height: 20),
             CircleAvatar(
               radius: 60,
-              backgroundImage: AssetImage('asset/img/profile_img.jpg'),
+              backgroundImage: AssetImage('asset/img/profile_img_2.png'),
             ),
             SizedBox(height: 10),
-            Text(
-              '유윤정',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'NotoSansKR',
-                  fontWeight: FontWeight.w700
-              ),
+            FutureBuilder<String>(
+              future: getUserName(userId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                }
+                if (!snapshot.hasData) {
+                  return Text("사용자 이름을 가져오지 못했습니다.");
+                }
+                return Text(
+                  snapshot.data!,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'NotoSansKR',
+                    fontWeight: FontWeight.w700,
+                  ),
+                );
+              },
             ),
             SizedBox(height: 20),
             GestureDetector(

@@ -22,7 +22,9 @@ String? spaceName;
 
 class TabView extends StatefulWidget {
   final String spaceName;
-  const TabView({super.key, required this.spaceName});
+  final String userId; // userId를 받기 위한 변수 추가
+
+  const TabView({super.key, required this.spaceName, required this.userId});
 
 
   @override
@@ -87,7 +89,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
         children:  [
-          MainHomeScreen(),
+          MainHomeScreen(userId: widget.userId,),
           ChartScreen(),
           SizedBox(), // Placeholder for Scan Dialog
           CalendarPage(),
@@ -100,7 +102,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   void _showDialog(BuildContext context, int tabIndex) {
     Widget dialog;
     if (tabIndex == 2) {
-      dialog = ScanDialog();
+      dialog = ScanDialog(userId: widget.userId,);
     } else {
       dialog = MenuDialog();
     }
@@ -175,7 +177,8 @@ class OcrResponse {
 
 
 class ScanDialog extends StatefulWidget {
-  const ScanDialog({Key? key}) : super(key: key);
+  final String userId;
+  const ScanDialog({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<ScanDialog> createState() => _ScanDialogState();
@@ -268,6 +271,7 @@ class _ScanDialogState extends State<ScanDialog> {
           context,
           MaterialPageRoute(
             builder: (context) => ReceiptScanComfirmScreen(
+              userId: widget.userId,
               purchased: purchased,
               address: address,
               date: date,
@@ -326,7 +330,7 @@ class _ScanDialogState extends State<ScanDialog> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ReceiptInputScreen(),
+                builder: (context) => ReceiptInputScreen(userId: widget.userId,),
               ),
             );
           },

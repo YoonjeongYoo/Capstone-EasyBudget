@@ -13,6 +13,7 @@ import 'package:easybudget/screen/receipt_scan_confirm_screen.dart';
 import 'package:flutter/material.dart';
 
 class ReceiptEditScreen extends StatelessWidget {
+  final String userId;
   final String purchased;
   final String address;
   final String date;
@@ -22,6 +23,7 @@ class ReceiptEditScreen extends StatelessWidget {
 
   const ReceiptEditScreen({
     super.key,
+    required this.userId,
     required this.purchased,
     required this.address,
     required this.date,
@@ -80,6 +82,7 @@ class ReceiptEditScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ReceiptScanComfirmScreen(
+                            userId: userId,
                             purchased: purchasedController.text,
                             address: addressController.text,
                             date: dateController.text,
