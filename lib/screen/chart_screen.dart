@@ -6,6 +6,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:getwidget/getwidget.dart';
 
 class ChartScreen extends StatefulWidget {
+  // final String spaceName;
+  //
+  // const ChartScreen({super.key, required this.spaceName});
   const ChartScreen({super.key});
 
   @override
@@ -13,6 +16,7 @@ class ChartScreen extends StatefulWidget {
 }
 
 class _ChartScreenState extends State<ChartScreen> {
+
   List<String> _values = <String>['예산 분석', '날짜별'];
   String? _selectedValue;
 
@@ -41,6 +45,7 @@ class _ChartScreenState extends State<ChartScreen> {
       DocumentSnapshot budgetAnalysisSnapshot = await firestore
           .collection('Space')
           .doc('KBpkiTfmpsg3ZI5iSpyY')
+      // 여기에 spacename 일치하는 문서 찾게  .where('sname', isEqualTo: spaceName)로 수정하기
           .collection('Chart')
           .doc('BudgetAnalysis')
           .get();

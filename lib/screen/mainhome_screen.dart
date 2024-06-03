@@ -9,7 +9,9 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart'; // NumberFormat을 사용하기 위해 임포트합니다.
 
 class MainHomeScreen extends StatelessWidget {
-  const MainHomeScreen({super.key});
+  // const MainHomeScreen({super.key});
+  final String? spaceName;
+  const MainHomeScreen({super.key, required this.spaceName});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,9 @@ class MainHomeScreen extends StatelessWidget {
             ),
           ),
         ],
-        title: '경기대학교 학생회',
+        // title: '경기대학교 학생회',
+        title: spaceName ?? 'default name',
+        // SpaceName 출력
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(

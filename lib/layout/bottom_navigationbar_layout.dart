@@ -87,10 +87,10 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
         children:  [
-          MainHomeScreen(),
-          ChartScreen(),
+          MainHomeScreen(spaceName:spaceName), // 여기에 spacename 넘기기 spaceName:spaceName
+          ChartScreen(),    // 여기에 spacename 넘기기
           SizedBox(), // Placeholder for Scan Dialog
-          CalendarPage(),
+          CalendarPage(spaceName:spaceName),   // 여기에 spacename 넘기기
           SizedBox(), // Placeholder for Menu Dialog
         ],
       ),
