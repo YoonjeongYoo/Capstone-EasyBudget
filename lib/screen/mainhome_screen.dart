@@ -12,7 +12,7 @@ class MainHomeScreen extends StatelessWidget {
   // const MainHomeScreen({super.key});
   final String? spaceName;
   final String userId; // userId를 받기 위한 변수 추가
-  const MainHomeScreen({super.key, required this.spaceName, required this.userId}});
+  const MainHomeScreen({super.key, required this.spaceName, required this.userId});
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
