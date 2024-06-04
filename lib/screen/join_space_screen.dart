@@ -172,6 +172,19 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                           .collection('entered')
                           .add(data2); // data2를 entered 서브컬렉션에 저장
 
+                    await FirebaseFirestore.instance
+                        .collection('User')
+                        .doc(udocid)
+                        .update({
+                      'spaces': FieldValue.arrayUnion([sdocid])
+                    })
+                        .then((_) {
+                      print("udocid successfully added to member array!");
+                    })
+                        .catchError((error) {
+                      print("Failed to add udocid to member array: $error");
+                    });
+
                     // 뒤로가기 동작 수행
                     Navigator.of(context).pop();
                   },
