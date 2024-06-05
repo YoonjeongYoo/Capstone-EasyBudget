@@ -135,12 +135,30 @@ class _AnnouncementBox extends StatelessWidget {
                               ),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('닫기'),
+                                  child: Text(
+                                    '닫기',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
                                 ),
                               ],
+                              backgroundColor: Colors.white,
+                              titleTextStyle: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'NotoSansKR',
+                                color: Colors.black,
+                              ),
+                              contentTextStyle: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'NotoSansKR',
+                                  color: Colors.black
+                              ),
                             );
                           },
                         );
@@ -191,7 +209,7 @@ class __RecentBudgetSpendingState extends State<_RecentBudgetSpending> {
         .doc('KBpkiTfmpsg3ZI5iSpyY')
         .collection('Receipt')
         .orderBy('indate', descending: true)
-        .limit(5)
+        .limit(6)
         .get();
 
     setState(() {
@@ -255,17 +273,6 @@ class _AnnouncementContent extends StatelessWidget {
         '2. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
         '3. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
         '4. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
         '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n';
 
     return Text(
@@ -277,7 +284,7 @@ class _AnnouncementContent extends StatelessWidget {
         fontSize: 13,
       ),
       overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-      maxLines: isExpanded ? null : 6, // Set max lines to control overflow behavior
+      maxLines: isExpanded ? null : 7, // Set max lines to control overflow behavior
     );
   }
 }

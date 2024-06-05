@@ -67,6 +67,44 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     super.dispose();
   }
 
+  void _showPasswordDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('비밀번호 찾기 결과'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                '확인',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'NotoSansKR',
+            color: Colors.black,
+          ),
+          contentTextStyle: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            fontFamily: 'NotoSansKR',
+              color: Colors.black
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
@@ -152,8 +190,11 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                       ? () async {
                     // 다음 버튼 로직 추가
                     final foundPw = await findPw(_idController.text, _nameController.text);
-                    print(foundPw);
-
+                    if (foundPw == null || foundPw.isEmpty) {
+                      _showPasswordDialog('정보가 일치하지 않습니다.');
+                    } else {
+                      _showPasswordDialog('비밀번호: $foundPw');
+                    }
                   }
                       : null,
                   style: ElevatedButton.styleFrom(

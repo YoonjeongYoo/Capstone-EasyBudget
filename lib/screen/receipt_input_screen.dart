@@ -213,12 +213,30 @@ class ReceiptInputScreen extends StatelessWidget {
           content: Text(content),
           actions: <Widget>[
             TextButton(
-              child: Text('확인'),
+              child: Text(
+                '확인',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(); // Dialog 닫기
               },
             ),
           ],
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'NotoSansKR',
+            color: Colors.black,
+          ),
+          contentTextStyle: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'NotoSansKR',
+              color: Colors.black
+          ),
         );
       },
     );
