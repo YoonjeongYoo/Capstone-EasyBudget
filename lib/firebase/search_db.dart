@@ -145,6 +145,7 @@ Future<String?> getCateName() async {
 
 Future<void> loginUser(String uid, String password) async {
   final db = FirebaseFirestore.instance;
+  String? udocid = '';
 
   try {
     // 로그인 검증
@@ -155,6 +156,14 @@ Future<void> loginUser(String uid, String password) async {
 
       // 사용자 문서 조회
       final userQuery = await db.collection("User").where("uid", isEqualTo: uid).get();
+      await db.collection('User')
+              .where('uid', isEqualTo: uid)
+              .get()
+              .then((value) {
+                for (var element in value.docs) {
+                  udocid = element.id;
+                }
+      });
 
       if (userQuery.docs.isNotEmpty) {
         final userDoc = userQuery.docs.first;
@@ -163,20 +172,33 @@ Future<void> loginUser(String uid, String password) async {
 
         if (userData != null) {
           // 사용자가 참여하고 있는 Space ID 목록 조회
-          List<dynamic> spaceIds = userData['spaces'];
-          print("User spaces: $spaceIds"); // 디버깅 출력 추가
+          final uentered = await db.collection('User').doc(udocid).collection('entered').get();
+          final ueData = uentered.docs.first.data();
+          String spaceId = ueData['sid'];
+          // List<dynamic> spaceIds = userData['spaces'];
+          // print("User spaces: $spaceIds"); // 디버깅 출력 추가
 
           // Space 문서들 조회
-          for (var spaceId in spaceIds) {
-            final spaceDoc = await db.collection("Space").doc(spaceId).get();
+          final spaceDoc = await db.collection("Space").where('sid', isEqualTo: spaceId).get();
 
-            if (spaceDoc.exists) {
-              final spaceData = spaceDoc.data();
-              print("Space ID: $spaceId, Data: $spaceData");
-            } else {
-              print("Space document with ID $spaceId does not exist.");
-            }
+          if (spaceDoc.docs.isNotEmpty) {
+            final spaceData = spaceDoc.docs.first.data();
+            print("Space ID: $spaceId, Data: $spaceData");
+          } else {
+            print("Space document with ID $spaceId does not exist.");
           }
+
+
+          // for (var spaceId in spaceIds) {
+          //   final spaceDoc = await db.collection("Space").doc(spaceId).get();
+          //
+          //   if (spaceDoc.exists) {
+          //     final spaceData = spaceDoc.data();
+          //     print("Space ID: $spaceId, Data: $spaceData");
+          //   } else {
+          //     print("Space document with ID $spaceId does not exist.");
+          //   }
+          // }
         } else {
           print("User data is null.");
         }
@@ -192,6 +214,7 @@ Future<void> loginUser(String uid, String password) async {
 }
 
 // 로그인 검증 함수
+
 Future<bool> validateLogin(String uid, String password) async {
   final db = FirebaseFirestore.instance;
   bool isValid = false;
@@ -211,16 +234,18 @@ Future<bool> validateLogin(String uid, String password) async {
 
   return isValid;
 }
-
 Future<List<String>> getUserSpaces(String userId) async {
   final db = FirebaseFirestore.instance;
   final userQuery = await db.collection("User").where("uid", isEqualTo: userId).get();
-
   if (userQuery.docs.isNotEmpty) {
+    final userQuery = await db.collection('User')
+        .where('uid', isEqualTo: userId)
+        .get();
+
     final userDoc = userQuery.docs.first;
     final userData = userDoc.data();
     print("User Data: $userData"); // 디버깅 출력 추가
-    if (userData != null && userData.containsKey('spaces')) {
+    if (userData.isNotEmpty && userData.containsKey('spaces')) {
       return List<String>.from(userData['spaces']);
     }
   } else {

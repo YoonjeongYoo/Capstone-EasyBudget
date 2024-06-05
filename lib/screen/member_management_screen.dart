@@ -1,10 +1,14 @@
 import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/firebase/search_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../firebase/login_db.dart';
 
 class MemberManagementScreen extends StatelessWidget {
   //const MemberManagementScreen({super.key});
@@ -13,7 +17,49 @@ class MemberManagementScreen extends StatelessWidget {
   const MemberManagementScreen({super.key, required this.spaceName});
 
   Future<List<Map<String, dynamic>>> fetchMembers() async {
-    // Space 컬렉션에서 members 배열을 가져옵니다.
+
+    String? sdocid = '';
+
+    await FirebaseFirestore.instance
+        .collection('Space')
+        .where('sname', isEqualTo: spaceName)
+        .get()
+        .then((value) {
+          for (var element in value.docs) {
+            sdocid = element.id;
+          }
+    });
+
+    Map <String, dynamic> members = {};
+    List<Map<String, dynamic>> testmember = [];
+    int count = 0;
+
+    final spaceQuerySnapshot = await FirebaseFirestore.instance
+        .collection('Space')
+        .doc(sdocid)
+        .collection('Member')
+        .get();
+
+    if (spaceQuerySnapshot.docs.isEmpty) {
+      // 해당하는 스페이스가 없을 경우 빈 리스트를 반환합니다.
+      return [];
+    }
+
+    for (var doc in spaceQuerySnapshot.docs) {
+      print(doc['uid']);
+      if (doc.data().isNotEmpty) {
+        String memberData = doc.get('uid');
+        print("--------------------------");
+        members['uid$count'] = memberData;
+        print(members);
+        count++;
+      }
+    }
+    // print(members);
+    testmember.add(members);
+
+    return testmember;
+/*    // Space 컬렉션에서 members 배열을 가져옵니다.
     final spaceQuerySnapshot = await FirebaseFirestore.instance
         .collection('Space')
         .where('sname', isEqualTo: spaceName)
@@ -40,7 +86,7 @@ class MemberManagementScreen extends StatelessWidget {
       }
     }
 
-    return members;
+    return members;*/
   }
 
 
