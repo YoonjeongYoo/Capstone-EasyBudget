@@ -1,20 +1,17 @@
 import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/address_layout.dart';
-//import 'package:easybudget/layout/amount_layout.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/category_layout.dart';
-//import 'package:easybudget/layout/cost_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:easybudget/layout/itmes_layout.dart';
 import 'package:easybudget/layout/pdate_layout.dart';
-//import 'package:easybudget/layout/pname_layout.dart';
 import 'package:easybudget/layout/purchased_layout.dart';
 import 'package:easybudget/layout/receipt_layout.dart';
 import 'package:easybudget/layout/totalcost_layout.dart';
 import 'package:easybudget/layout/writer_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart'; // NumberFormat 클래스를 사용하기 위해 추가
+import 'package:intl/intl.dart';
 
 class ExpenseDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> expense;
@@ -32,7 +29,6 @@ class ExpenseDetailsScreen extends StatelessWidget {
 
     List<Map<String, String>> itemsList = itemsSnapshot.docs.map((doc) {
       final data = doc.data();
-      // cost를 쉼표(,)가 포함된 문자열로 변환
       if (data.containsKey('cost')) {
         data['cost'] = NumberFormat('#,##0').format(int.parse(data['cost'].toString()));
       }
@@ -40,6 +36,19 @@ class ExpenseDetailsScreen extends StatelessWidget {
     }).toList();
 
     return itemsList;
+  }
+
+  Future<Map<String, dynamic>> _fetchUserData(String uid) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference users = firestore.collection('User');
+    QuerySnapshot querySnapshot = await users.where('uid', isEqualTo: uid).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var userData = querySnapshot.docs.first.data() as Map<String, dynamic>;
+      return userData;
+    } else {
+      throw Exception('User not found');
+    }
   }
 
   @override
@@ -66,7 +75,21 @@ class ExpenseDetailsScreen extends StatelessWidget {
                 address: AddressView(address: '${expense['address']}',),
                 pdate: PdateView(pdate: formattedPdate,),
                 category: CategoryView(category: '${expense['category']}',),
-                writer: WriterView(name: '${expense['writer']}', uid: 'yyj0310',),
+                writer: FutureBuilder<Map<String, dynamic>>(
+                  future: _fetchUserData(expense['writer']),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData) {
+                      return Text('User not found');
+                    } else {
+                      var userData = snapshot.data!;
+                      return WriterView(name: userData['uname'], uid: userData['uid']);
+                    }
+                  },
+                ),
                 items: FutureBuilder<List<Map<String, String>>>(
                   future: _fetchItems(),
                   builder: (context, snapshot) {

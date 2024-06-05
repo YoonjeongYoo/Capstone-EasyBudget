@@ -17,8 +17,22 @@ import 'dart:math';
 
 class ReceiptInputScreen extends StatelessWidget {
   final String userId;
+  final String spaceName;
 
-  const ReceiptInputScreen({super.key, required this.userId}); // 로그인 후 저장된 사용자 ID
+  const ReceiptInputScreen({super.key, required this.userId, required this.spaceName});
+
+  Future<Map<String, dynamic>> _fetchUserData(String userId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference users = firestore.collection('User');
+    QuerySnapshot querySnapshot = await users.where('uid', isEqualTo: userId).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var userData = querySnapshot.docs.first.data() as Map<String, dynamic>;
+      return userData;
+    } else {
+      throw Exception('User not found');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +63,21 @@ class ReceiptInputScreen extends StatelessWidget {
                 address: AddressEdit(controller: addressController),
                 pdate: PdateEdit(controller: dateController),
                 category: CategoryEdit(controller: categoryController),
-                writer: WriterView(name: '유윤정', uid: 'yyj0310'), //user 값 받아와서..
+                writer: FutureBuilder<Map<String, dynamic>>(
+                  future: _fetchUserData(userId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData) {
+                      return Text('User not found');
+                    } else {
+                      var userData = snapshot.data!;
+                      return WriterView(name: userData['uname'], uid: userData['uid']);
+                    }
+                  },
+                ),
                 items: ItemsEdit(key: itemsEditKey, existingData: [{}]),
                 totalcost: TotalCostEdit(controller: totalCostController),
               ),
@@ -64,7 +92,7 @@ class ReceiptInputScreen extends StatelessWidget {
 
                   List<Map<String, String>> items = itemsEditKey.currentState!.getItems();
 
-                  await addReceiptToFirebase(context, purchased, address, date, category, '유윤정', items, totalCost);
+                  await addReceiptToFirebase(context, purchased, address, date, category, userId, items, totalCost);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: blueColor,
@@ -96,7 +124,7 @@ class ReceiptInputScreen extends StatelessWidget {
       String address,
       String date,
       String category,
-      String writer,
+      String userId,
       List<Map<String, String>> items,
       String totalCost,
       ) async {
@@ -140,8 +168,8 @@ class ReceiptInputScreen extends StatelessWidget {
         'indate': Timestamp.now(),
         'purchased': purchased,
         'totalCost': int.parse(totalCost.replaceAll(',', '')),
-        'writer': writer,
-        'processed' : false,
+        'writer': userId,
+        'processed': false,
       });
 
       print('영수증 추가 완료: ${newReceipt.id}');
@@ -194,7 +222,7 @@ class ReceiptInputScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TabView(spaceName: '', userId: userId,), // TabView 위젯으로 이동
+                    builder: (context) => TabView(spaceName: spaceName, userId: userId,), // TabView 위젯으로 이동
                   ),
                 );
               },
