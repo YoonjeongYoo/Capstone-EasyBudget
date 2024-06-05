@@ -131,6 +131,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 생성하기',
+        back: true,
         action: [
           /*Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),

@@ -102,7 +102,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   void _showDialog(BuildContext context, int tabIndex) {
     Widget dialog;
     if (tabIndex == 2) {
-      dialog = ScanDialog(userId: widget.userId,);
+      dialog = ScanDialog(userId: widget.userId, spaceName: widget.spaceName,);
     } else {
       dialog = MenuDialog();
     }
@@ -177,8 +177,9 @@ class OcrResponse {
 
 
 class ScanDialog extends StatefulWidget {
+  final String spaceName;
   final String userId;
-  const ScanDialog({Key? key, required this.userId}) : super(key: key);
+  const ScanDialog({Key? key, required this.userId, required this.spaceName}) : super(key: key);
 
   @override
   State<ScanDialog> createState() => _ScanDialogState();
@@ -271,6 +272,7 @@ class _ScanDialogState extends State<ScanDialog> {
           context,
           MaterialPageRoute(
             builder: (context) => ReceiptScanComfirmScreen(
+              spaceName: widget.spaceName,
               userId: widget.userId,
               purchased: purchased,
               address: address,
@@ -330,7 +332,7 @@ class _ScanDialogState extends State<ScanDialog> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ReceiptInputScreen(userId: widget.userId,),
+                builder: (context) => ReceiptInputScreen(userId: widget.userId, spaceName: widget.spaceName,),
               ),
             );
           },

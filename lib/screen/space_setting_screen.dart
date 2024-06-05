@@ -11,6 +11,7 @@ class SpaceSettingScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 세부 설정',
+        back: true,
         action: [],
       ),
       body: SingleChildScrollView( // 2. SingleChildScrollView 추가

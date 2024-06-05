@@ -80,6 +80,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '달력',
+        back: true,
         action: [],
       ),
       body: Column(

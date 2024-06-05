@@ -18,6 +18,7 @@ import 'dart:math'; // 랜덤 값을 생성하기 위해 추가
 import 'receipt_edit_screen.dart';
 
 class ReceiptScanComfirmScreen extends StatelessWidget {
+  final String spaceName;
   final String userId;
   final String purchased;
   final String address;
@@ -28,6 +29,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
 
   const ReceiptScanComfirmScreen({
     super.key,
+    required this.spaceName,
     required this.userId,
     required this.purchased,
     required this.address,
@@ -37,6 +39,19 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
     required this.totalCost,
   });
 
+  Future<Map<String, dynamic>> _fetchUserData(String userId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference users = firestore.collection('User');
+    QuerySnapshot querySnapshot = await users.where('uid', isEqualTo: userId).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var userData = querySnapshot.docs.first.data() as Map<String, dynamic>;
+      return userData;
+    } else {
+      throw Exception('User not found');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController categoryController = TextEditingController(text: category);
@@ -44,6 +59,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '영수증 정보 확인',
+        back: true,
         action: [],
       ),
       body: Padding(
@@ -59,7 +75,21 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
                 address: AddressView(address: address,),
                 pdate: PdateView(pdate: date,),
                 category: CategoryEdit(controller: categoryController),
-                writer: WriterView(name: '유윤정', uid: 'yyj0310',),
+                writer: FutureBuilder<Map<String, dynamic>>(
+                  future: _fetchUserData(userId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData) {
+                      return Text('User not found');
+                    } else {
+                      var userData = snapshot.data!;
+                      return WriterView(name: userData['uname'], uid: userData['uid']);
+                    }
+                  },
+                ),
                 items: ItemsView(items: items,),
                 totalcost: TotalCostView(totalcost: totalCost,),
               ),
@@ -73,6 +103,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ReceiptEditScreen(
+                            spaceName: spaceName,
                             userId: userId,
                             purchased: purchased,
                             address: address,
@@ -173,7 +204,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
         'indate': Timestamp.now(),
         'purchased': purchased,
         'totalCost': int.parse(totalCost.replaceAll(',', '')),
-        'writer': 'yyj0310',
+        'writer': userId,
         'processed' : false,
       });
 
@@ -190,7 +221,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
 
       // 등록 완료 Dialog 표시
       _showCompletionDialog(context);
-    } catch (e) {
+    } catch ( e) {
       print('Error adding receipt: $e');
     }
   }
@@ -231,7 +262,7 @@ class ReceiptScanComfirmScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TabView(spaceName: '', userId: userId,), // TabView 위젯으로 이동
+                    builder: (context) => TabView(spaceName: spaceName, userId: userId,), // TabView 위젯으로 이동
                   ),
                 );
               },

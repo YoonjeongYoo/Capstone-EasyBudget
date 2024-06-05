@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 class AppbarLayout extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> action;
   final String title;
+  final bool back;
 
   const AppbarLayout({
     required this.action,
     required this.title,
-    Key? key,
+    Key? key, required this.back,
   }) : super(key: key);
 
   @override
@@ -17,7 +18,7 @@ class AppbarLayout extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      automaticallyImplyLeading: true, // 뒤로가기 버튼 자동 사용
+      automaticallyImplyLeading: back, // 뒤로가기 버튼 자동 사용
       title: Text(
         title,
         style: TextStyle(

@@ -83,6 +83,7 @@ class _CalendarPageState extends State<CalendarPage> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: widget.spaceName ?? 'default name',
+        back: true,
         action: [],
       ),
       body: Padding(

@@ -17,6 +17,7 @@ class _FindIdScreenState extends State<FindIdScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '아이디 찾기',
+        back: true,
         action: [],
       ),
       body: Center(

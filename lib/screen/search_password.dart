@@ -110,6 +110,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '비밀번호 찾기',
+        back: true,
         action: [],
       ),
       body: Padding(

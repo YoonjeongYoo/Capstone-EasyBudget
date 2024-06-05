@@ -647,6 +647,7 @@ class _ChartScreenState extends State<ChartScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '시각화',
+        back: true,
         action: [],
       ),
       body: Container(

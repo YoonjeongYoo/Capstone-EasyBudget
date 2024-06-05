@@ -12,6 +12,7 @@ class ApprovalManagementScreen extends StatelessWidget {
       appbar: AppbarLayout(
         title: '스페이스 참여 요청',
         action: [],
+        back: true,
       ),
       body: SingleChildScrollView( // 2. SingleChildScrollView 추가
         child: Column(
