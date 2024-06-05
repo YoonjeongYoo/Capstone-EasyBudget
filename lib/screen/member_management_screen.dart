@@ -49,6 +49,7 @@ class MemberManagementScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 멤버 관리',
+        back: true,
         action: [],
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(

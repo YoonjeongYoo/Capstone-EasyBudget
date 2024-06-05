@@ -20,140 +20,144 @@ class SpaceManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
-      appbar: AppbarLayout(
-        title: '스페이스 관리',
-        action: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MypageScreen(userId: userId), // userId를 전달
-                  ),
-                );
-              },
-              icon: Icon(CupertinoIcons.person_crop_circle_fill),
-              iconSize: 30,
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Flexible(
-              flex: 8,
-              child: FutureBuilder<List<String>>(
-                future: getUserSpaces(userId),
-                builder: (context, AsyncSnapshot<List<String>> snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.data!.isEmpty) {
-                    print("No spaces found for user: $userId"); // 디버깅 출력 추가
-                    return Center(child: Text("참여 중인 스페이스가 없습니다."));
-                  }
-
-                  List<String> spaceIds = snapshot.data!;
-                  print("User spaces: $spaceIds"); // 디버깅 출력 추가
-                  return StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('Space')
-                        .where(FieldPath.documentId, whereIn: spaceIds)
-                        .snapshots(),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> spaceSnapshot) {
-                      if (!spaceSnapshot.hasData) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      return SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: spaceSnapshot.data!.docs.map((document) {
-                            return _SpaceContainer(name: document['sname'], sid: document['sid'], userId: userId,);
-                          }).toList(),
-                        ),
-                      );
-                    },
+    return PopScope(
+      canPop: false, // 뒤로가기 버튼 비활성화
+      child: DefaultLayout(
+        appbar: AppbarLayout(
+          title: '스페이스 관리',
+          back: false,
+          action: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MypageScreen(userId: userId), // userId를 전달
+                    ),
                   );
                 },
-              ),
-            ),
-            Flexible(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 10.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => JoinSpaceScreen(), // 수정
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
-                      foregroundColor: primaryColor,
-                      textStyle: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'NotoSansKR',
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
-                    ),
-                    child: Text(
-                      '스페이스 참가하기',
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreateSpaceScreen(), // 수정
-                        ),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: primaryColor,
-                      foregroundColor: blueColor,
-                      side: BorderSide(color: blueColor),
-                      textStyle: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'NotoSansKR',
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
-                    ),
-                    child: Text(
-                      '스페이스 생성하기',
-                    ),
-                  ),
-                ],
+                icon: Icon(CupertinoIcons.person_crop_circle_fill),
+                iconSize: 30,
               ),
             ),
           ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 20,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Flexible(
+                flex: 8,
+                child: FutureBuilder<List<String>>(
+                  future: getUserSpaces(userId),
+                  builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.data!.isEmpty) {
+                      print("No spaces found for user: $userId"); // 디버깅 출력 추가
+                      return Center(child: Text("참여 중인 스페이스가 없습니다."));
+                    }
+
+                    List<String> spaceIds = snapshot.data!;
+                    print("User spaces: $spaceIds"); // 디버깅 출력 추가
+                    return StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('Space')
+                          .where(FieldPath.documentId, whereIn: spaceIds)
+                          .snapshots(),
+                      builder: (context, AsyncSnapshot<QuerySnapshot> spaceSnapshot) {
+                        if (!spaceSnapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        return SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: spaceSnapshot.data!.docs.map((document) {
+                              return _SpaceContainer(name: document['sname'], sid: document['sid'], userId: userId,);
+                            }).toList(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              Flexible(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: 10.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => JoinSpaceScreen(), // 수정
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blueColor,
+                        foregroundColor: primaryColor,
+                        textStyle: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'NotoSansKR',
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
+                      ),
+                      child: Text(
+                        '스페이스 참가하기',
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    OutlinedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CreateSpaceScreen(), // 수정
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: blueColor,
+                        side: BorderSide(color: blueColor),
+                        textStyle: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'NotoSansKR',
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 15), // 높이를 5씩 늘림
+                      ),
+                      child: Text(
+                        '스페이스 생성하기',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -233,3 +237,4 @@ class _SpaceContainer extends StatelessWidget {
     );
   }
 }
+

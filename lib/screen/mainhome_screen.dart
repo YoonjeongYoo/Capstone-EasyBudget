@@ -54,6 +54,7 @@ class MainHomeScreen extends StatelessWidget {
         ],
         // title: '경기대학교 학생회',
         title: spaceName ?? 'default name',
+        back: true,
         // SpaceName 출력
       ),
       body: Padding(

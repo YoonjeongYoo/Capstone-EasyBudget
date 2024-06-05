@@ -13,6 +13,7 @@ class NotificationScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '알림',
+        back: true,
         action: [],
       ),
       body: SingleChildScrollView( // 2. SingleChildScrollView 추가

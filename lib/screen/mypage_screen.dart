@@ -24,6 +24,7 @@ class MypageScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppbarLayout(
         title: '계정 관리',
+        back: true,
         action: [],
       ),
       body: Container(

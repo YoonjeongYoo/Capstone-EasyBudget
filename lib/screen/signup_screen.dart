@@ -15,6 +15,7 @@ class SigninScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '회원가입',
+        back: true,
         action: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

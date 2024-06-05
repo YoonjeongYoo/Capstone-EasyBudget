@@ -33,6 +33,7 @@ class ReceiptInputScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '영수증 수기 입력',
+        back: true,
         action: [],
       ),
       body: Padding(

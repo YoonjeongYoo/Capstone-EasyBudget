@@ -45,6 +45,7 @@ class ReceiptEditScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '영수증 정보 확인',
+        back: true,
         action: [],
       ),
       body: Padding(
