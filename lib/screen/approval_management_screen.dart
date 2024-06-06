@@ -2,9 +2,49 @@ import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ApprovalManagementScreen extends StatelessWidget {
-  const ApprovalManagementScreen({super.key});
+  final String spaceName;
+
+  const ApprovalManagementScreen({super.key, required this.spaceName});
+
+  Future<List<Map<String, String>>> _fetchRequests() async {
+    // Space 컬렉션에서 spaceName과 일치하는 문서를 쿼리합니다.
+    final spaceQuerySnapshot = await FirebaseFirestore.instance
+        .collection('Space')
+        .where('sname', isEqualTo: spaceName)
+        .get();
+
+    if (spaceQuerySnapshot.docs.isEmpty) {
+      return [];
+    }
+
+    final spaceDocId = spaceQuerySnapshot.docs.first.id;
+
+    final memberCollection = FirebaseFirestore.instance
+        .collection('Space')
+        .doc(spaceDocId)
+        .collection('Member');
+
+    final memberSnapshot = await memberCollection.get();
+
+    List<Map<String, String>> requests = [];
+
+    for (var memberDoc in memberSnapshot.docs) {
+      final uid = memberDoc['uid'];
+      final userDoc = await FirebaseFirestore.instance
+          .collection('User')
+          .where('uid', isEqualTo: uid)
+          .get();
+
+      if (userDoc.docs.isNotEmpty) {
+        final uname = userDoc.docs.first['uname'];
+        requests.add({'name': uname, 'uid': uid});
+      }
+    }
+    return requests;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,23 +54,34 @@ class ApprovalManagementScreen extends StatelessWidget {
         action: [],
         back: true,
       ),
-      body: SingleChildScrollView( // 2. SingleChildScrollView 추가
-        child: Column(
-          children: [
-            _RequestContainer(name: '김효영', uid: 'khy1234', profile: 'asset/img/profile_img_2.png',),
-            _RequestContainer(name: '이하빈', uid: 'lhb123', profile: 'asset/img/profile_img_2.png',),
-            _RequestContainer(name: '이은수', uid: 'les456', profile: 'asset/img/profile_img_2.png',),
-            Divider(
-              color: Color(0xffe9ecef),
-            ),
-            // 다른 알림 위젯들 추가
-          ],
-        ),
+      body: FutureBuilder<List<Map<String, String>>>(
+        future: _fetchRequests(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('오류가 발생했습니다.'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('참여 요청이 없습니다.'));
+          } else {
+            final requests = snapshot.data!;
+            return SingleChildScrollView(
+              child: Column(
+                children: requests.map((request) {
+                  return _RequestContainer(
+                    name: request['name']!,
+                    uid: request['uid']!,
+                    profile: 'asset/img/profile_img_2.png',
+                  );
+                }).toList(),
+              ),
+            );
+          }
+        },
       ),
     );
   }
 }
-
 
 class _RequestContainer extends StatelessWidget {
   final String name;
@@ -42,15 +93,11 @@ class _RequestContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.symmetric(
-          horizontal: 30
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 30),
       height: 80,
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: Color(0xffe9ecef)), // 위쪽 테두리
-        ),
+        border: Border(top: BorderSide(color: Color(0xffe9ecef))),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,23 +108,23 @@ class _RequestContainer extends StatelessWidget {
                 radius: 20,
                 backgroundImage: AssetImage(profile),
               ),
-              SizedBox(width: 20,),
+              SizedBox(width: 20),
               Text(
-                '$name',
+                name,
                 style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansKR'
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'NotoSansKR',
                 ),
               ),
               Text(
                 '($uid)',
                 style: TextStyle(
-                    color: Colors.black38,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'NotoSansKR'
+                  color: Colors.black38,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'NotoSansKR',
                 ),
               ),
             ],
@@ -85,52 +132,48 @@ class _RequestContainer extends StatelessWidget {
           Row(
             children: [
               ElevatedButton(
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: blueColor,
                   foregroundColor: primaryColor,
                   textStyle: TextStyle(),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   padding: EdgeInsets.symmetric(vertical: 10),
                 ),
                 child: Text(
                   '승인',
                   style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'NotoSansKR'
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR',
                   ),
                 ),
               ),
-              SizedBox(width: 5,),
+              SizedBox(width: 5),
               ElevatedButton(
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: primaryColor,
                   textStyle: TextStyle(),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   padding: EdgeInsets.symmetric(vertical: 10),
                 ),
                 child: Text(
                   '거절',
                   style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'NotoSansKR'
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR',
                   ),
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

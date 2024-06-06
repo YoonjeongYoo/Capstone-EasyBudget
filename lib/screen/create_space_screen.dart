@@ -189,10 +189,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: _checkDuplicate,
-                      // {
-                      //   // 중복 확인 로직 추가
-                      // },
+                      onPressed: _checkDuplicate, // 중복확인 로직
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Color.fromRGBO(0, 88, 246, 1),

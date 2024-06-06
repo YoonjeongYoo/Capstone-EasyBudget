@@ -31,7 +31,7 @@ class _AnnouncementFormState extends State<AnnouncementForm> {
   Widget build(BuildContext context) {
     return DefaultLayout(
       appbar: AppbarLayout(
-        title: '공지사항 저장하기',
+        title: '공지사항 작성하기',
         back: true,
         action: [],
       ),
