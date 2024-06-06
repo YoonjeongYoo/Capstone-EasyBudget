@@ -249,7 +249,16 @@ Future<List<String>> getUserSpaces(String userId) async {
 
       // 'entered' 필드가 있는지 확인하고 List<String>으로 변환
       if (userData != null && userData.containsKey('entered')) {
-        spaceIds = List<String>.from(userData['entered']);
+        // entered 필드가 List<Map> 형식인지 확인하고 처리
+        if (userData['entered'] is List) {
+          for (var item in userData['entered']) {
+            if (item is String) {
+              spaceIds.add(item);
+            } else if (item is Map && item.containsKey('sid')) {
+              spaceIds.add(item['sid']);
+            }
+          }
+        }
         print("Space IDs: $spaceIds"); // 추가 디버깅 출력
       } else {
         print("'entered' field does not exist or is not a List in user data.");
@@ -263,7 +272,6 @@ Future<List<String>> getUserSpaces(String userId) async {
 
   return spaceIds;
 }
-
 
 Future<String?> getSid(String docid) async {
   final db = FirebaseFirestore.instance;
