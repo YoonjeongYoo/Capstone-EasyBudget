@@ -12,7 +12,7 @@ class MemberManagementScreen extends StatelessWidget {
 
   const MemberManagementScreen({super.key, required this.spaceName});
 
-  Future<List<Map<String, dynamic>>> fetchMembers() async {
+  Future<List<Map<String, dynamic>>> fetchMembers() async { // 정보만 가져오는 것
     // Space 컬렉션에서 members 배열을 가져옵니다.
     final spaceQuerySnapshot = await FirebaseFirestore.instance
         .collection('Space')
