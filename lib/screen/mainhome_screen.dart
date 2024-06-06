@@ -66,7 +66,7 @@ class MainHomeScreen extends StatelessWidget {
           children: [
             Flexible(
               flex: 4,
-              child: _AnnouncementBox(),
+              child: _AnnouncementBox(spaceName: spaceName),
             ),
             SizedBox(height: 50,),
             Flexible(
@@ -81,7 +81,8 @@ class MainHomeScreen extends StatelessWidget {
 }
 
 class _AnnouncementBox extends StatelessWidget {
-  const _AnnouncementBox({super.key,});
+  final String? spaceName;
+  const _AnnouncementBox({super.key, this.spaceName});
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +131,7 @@ class _AnnouncementBox extends StatelessWidget {
                               content: SingleChildScrollView(
                                 child: ListBody(
                                   children: <Widget>[
-                                    _AnnouncementContent(isExpanded: true),
+                                    _AnnouncementContent(spaceName: spaceName, isExpanded: true),
                                   ],
                                 ),
                               ),
@@ -177,7 +178,7 @@ class _AnnouncementBox extends StatelessWidget {
                 ),
                 SizedBox(height: 5,),
                 // 텍스트가 컨테이너를 벗어나면 '...'으로 표시
-                _AnnouncementContent(isExpanded: false),
+                _AnnouncementContent(spaceName: spaceName, isExpanded: false),
               ],
             ),
           ),
@@ -261,31 +262,56 @@ class __RecentBudgetSpendingState extends State<_RecentBudgetSpending> {
   }
 }
 
+
 class _AnnouncementContent extends StatelessWidget {
+  final String? spaceName;
   final bool isExpanded;
-  const _AnnouncementContent({super.key, this.isExpanded = false});
+  const _AnnouncementContent({super.key, this.spaceName, this.isExpanded = false});
+
+  Future<String> _fetchAnnouncement() async {
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+        .collection('Space')
+        .where('sname', isEqualTo: spaceName)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+          .collection('Space')
+          .doc(querySnapshot.docs.first.id)
+          .collection('Notice')
+          .doc('notice')
+          .get();
+      return snapshot.data()?['announcement'] ?? 'No announcement found';
+    } else {
+      return 'No space found with the specified name';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    const announcementText = '<학생회 예산 관리 공지사항>\n'
-        '학생회 예산 관리와 관련된 주요 공지사항은 다음과 같습니다:\n\n'
-        '- 학생회 예산 신청 방법\n'
-        '1. 학생회 예산 신청은 온라인 신청 시스템을 통해 진행됩니다. \n'
-        '2. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '3. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '4. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n'
-        '5. 예산 비목별 신청 방법과 제출 서류를 잘 확인하여 준비해야 합니다. \n';
-
-    return Text(
-      announcementText,
-      style: TextStyle(
-        color: Colors.black,
-        fontWeight: FontWeight.w500,
-        fontFamily: 'NotoSansKR',
-        fontSize: 13,
-      ),
-      overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-      maxLines: isExpanded ? null : 7, // Set max lines to control overflow behavior
+    return FutureBuilder<String>(
+      future: _fetchAnnouncement(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Failed to load announcement'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No announcement found'));
+        } else {
+          return Text(
+            snapshot.data!,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'NotoSansKR',
+              fontSize: 13,
+            ),
+            overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+            maxLines: isExpanded ? null : 7,
+          );
+        }
+      },
     );
   }
 }
