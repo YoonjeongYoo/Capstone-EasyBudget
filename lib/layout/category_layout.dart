@@ -32,7 +32,7 @@ class CategoryEdit extends StatefulWidget {
 }
 
 class _CategoryEditState extends State<CategoryEdit> {
-  final _categories = ['카테고리 선택', '교통비', '식비', '도서']; // DB에서 받아오도록
+  final _categories = ['카테고리 선택', '교통비', '식비', '도서', '숙소비']; // DB에서 받아오도록
   String? _selectedCat;
 
   @override
