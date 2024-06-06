@@ -455,7 +455,7 @@ class MenuDialog extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MemberManagementScreen(spaceName: spaceName!, currentUserId: currentUserId), // currentUserId 전달
+                builder: (context) => MemberManagementScreen(spaceName: spaceName, currentUserId: currentUserId), // currentUserId 전달
               ),
             );
           },
