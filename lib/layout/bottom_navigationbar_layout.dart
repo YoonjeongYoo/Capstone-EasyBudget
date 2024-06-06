@@ -104,7 +104,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
     if (tabIndex == 2) {
       dialog = ScanDialog(userId: widget.userId, spaceName: widget.spaceName,);
     } else {
-      dialog = MenuDialog(currentUserId: widget.userId); // currentUserId를 전달
+      dialog = MenuDialog(spaceName:widget.spaceName ,currentUserId: widget.userId); // currentUserId를 전달
     }
 
     showCupertinoModalPopup(
@@ -357,8 +357,9 @@ class _ScanDialogState extends State<ScanDialog> {
 
 class MenuDialog extends StatelessWidget {
   final String currentUserId; // currentUserId 추가
+  final String spaceName;
 
-  const MenuDialog({Key? key, required this.currentUserId}) : super(key: key);
+  const MenuDialog({Key? key, required this.currentUserId, required this.spaceName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -439,7 +440,7 @@ class MenuDialog extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ApprovalManagementScreen(), // 수정
+                builder: (context) => ApprovalManagementScreen(spaceName: spaceName), // 수정
               ),
             );
           },

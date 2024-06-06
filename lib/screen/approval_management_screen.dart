@@ -5,12 +5,26 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ApprovalManagementScreen extends StatelessWidget {
-  const ApprovalManagementScreen({super.key});
+  final String spaceName;
+
+  const ApprovalManagementScreen({super.key, required this.spaceName});
 
   Future<List<Map<String, String>>> _fetchRequests() async {
+    // Space 컬렉션에서 spaceName과 일치하는 문서를 쿼리합니다.
+    final spaceQuerySnapshot = await FirebaseFirestore.instance
+        .collection('Space')
+        .where('sname', isEqualTo: spaceName)
+        .get();
+
+    if (spaceQuerySnapshot.docs.isEmpty) {
+      return [];
+    }
+
+    final spaceDocId = spaceQuerySnapshot.docs.first.id;
+
     final memberCollection = FirebaseFirestore.instance
         .collection('Space')
-        .doc('KBpkiTfmpsg3ZI5iSpyY')
+        .doc(spaceDocId)
         .collection('Member');
 
     final memberSnapshot = await memberCollection.get();
