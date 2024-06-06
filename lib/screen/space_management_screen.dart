@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import '../firebase/login_db.dart';
 import '../firebase/search_db.dart'; // getUserSpaces 함수를 사용하기 위해 import
 
 class SpaceManagementScreen extends StatelessWidget {
@@ -68,21 +67,31 @@ class SpaceManagementScreen extends StatelessWidget {
                       return Center(child: Text("참여 중인 스페이스가 없습니다."));
                     }
 
-                    List<String> spaceIds = snapshot.data!;
-                    print("User spaces: $spaceIds"); // 디버깅 출력 추가
+                    List<String> spaceSids = snapshot.data!;
+                    print("User spaces: $spaceSids"); // 디버깅 출력 추가
+
                     return StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('Space')
-                          .where(FieldPath.documentId, whereIn: spaceIds)
+                          .where('sid', whereIn: spaceSids)
                           .snapshots(),
                       builder: (context, AsyncSnapshot<QuerySnapshot> spaceSnapshot) {
                         if (!spaceSnapshot.hasData) {
                           return Center(child: CircularProgressIndicator());
                         }
+                        if (spaceSnapshot.data!.docs.isEmpty) {
+                          print("No spaces found for SIDs: $spaceSids"); // 추가 디버깅 출력
+                          return Center(child: Text("참여 중인 스페이스가 없습니다."));
+                        }
+                        print("Spaces found: ${spaceSnapshot.data!.docs.length}"); // 추가 디버깅 출력
+                        spaceSnapshot.data!.docs.forEach((document) {
+                          print("Space document ID: ${document.id}, Data: ${document.data()}"); // 추가 디버깅 출력
+                        });
                         return SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: spaceSnapshot.data!.docs.map((document) {
+                              print("Space document: ${document.data()}"); // 추가 디버깅 출력
                               return _SpaceContainer(name: document['sname'], sid: document['sid'], userId: userId,);
                             }).toList(),
                           ),
@@ -237,4 +246,3 @@ class _SpaceContainer extends StatelessWidget {
     );
   }
 }
-
