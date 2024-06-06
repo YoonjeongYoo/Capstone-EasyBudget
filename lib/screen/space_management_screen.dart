@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firebase/search_db.dart'; // getUserSpaces 함수를 사용하기 위해 import
+import 'package:flutter/services.dart';
 
 class SpaceManagementScreen extends StatelessWidget {
   final String userId; // 로그인 후 저장된 사용자 ID
@@ -19,97 +20,96 @@ class SpaceManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false, // 뒤로가기 버튼 비활성화
-      child: DefaultLayout(
-        appbar: AppbarLayout(
-          title: '스페이스 관리',
-          back: false,
-          action: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MypageScreen(userId: userId), // userId를 전달
-                    ),
-                  );
-                },
-                icon: Icon(CupertinoIcons.person_crop_circle_fill),
-                iconSize: 30,
-              ),
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 20,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Flexible(
-                flex: 8,
-                child: FutureBuilder<List<String>>(
-                  future: getUserSpaces(userId),
-                  builder: (context, AsyncSnapshot<List<String>> snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.data!.isEmpty) {
-                      print("No spaces found for user: $userId"); // 디버깅 출력 추가
-                      return Center(child: Text("참여 중인 스페이스가 없습니다."));
-                    }
-
-                    List<String> spaceSids = snapshot.data!;
-                    print("User spaces: $spaceSids"); // 디버깅 출력 추가
-
-                    return StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('Space')
-                          .where('sid', whereIn: spaceSids)
-                          .snapshots(),
-                      builder: (context, AsyncSnapshot<QuerySnapshot> spaceSnapshot) {
-                        if (!spaceSnapshot.hasData) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        if (spaceSnapshot.data!.docs.isEmpty) {
-                          print("No spaces found for SIDs: $spaceSids"); // 추가 디버깅 출력
-                          return Center(child: Text("참여 중인 스페이스가 없습니다."));
-                        }
-                        print("Spaces found: ${spaceSnapshot.data!.docs.length}"); // 추가 디버깅 출력
-                        spaceSnapshot.data!.docs.forEach((document) {
-                          print("Space document ID: ${document.id}, Data: ${document.data()}"); // 추가 디버깅 출력
-                        });
-                        return SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: spaceSnapshot.data!.docs.map((document) {
-                              print("Space document: ${document.data()}"); // 추가 디버깅 출력
-                              return _SpaceContainer(name: document['sname'], sid: document['sid'], userId: userId,);
-                            }).toList(),
-                          ),
-                        );
-                      },
+    return SafeArea(
+      child: PopScope(
+        canPop: false, // 뒤로가기 버튼 비활성화
+        child: DefaultLayout(
+          appbar: AppbarLayout(
+            title: '스페이스 관리',
+            back: false,
+            action: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    SystemChannels.textInput.invokeMethod('TextInput.hide'); // 키보드 닫기
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MypageScreen(userId: userId), // userId를 전달
+                      ),
                     );
                   },
+                  icon: Icon(CupertinoIcons.person_crop_circle_fill),
+                  iconSize: 30,
                 ),
               ),
-              Flexible(
-                flex: 2,
-                child: Column(
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: FutureBuilder<List<String>>(
+                    future: getUserSpaces(userId),
+                    builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.data!.isEmpty) {
+                        print("No spaces found for user: $userId"); // 디버깅 출력 추가
+                        return Center(child: Text("참여 중인 스페이스가 없습니다."));
+                      }
+
+                      List<String> spaceSids = snapshot.data!;
+                      print("User spaces: $spaceSids"); // 디버깅 출력 추가
+
+                      return StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('Space')
+                            .where('sid', whereIn: spaceSids)
+                            .snapshots(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot> spaceSnapshot) {
+                          if (!spaceSnapshot.hasData) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (spaceSnapshot.data!.docs.isEmpty) {
+                            print("No spaces found for SIDs: $spaceSids"); // 추가 디버깅 출력
+                            return Center(child: Text("참여 중인 스페이스가 없습니다."));
+                          }
+                          print("Spaces found: ${spaceSnapshot.data!.docs.length}"); // 추가 디버깅 출력
+                          spaceSnapshot.data!.docs.forEach((document) {
+                            print("Space document ID: ${document.id}, Data: ${document.data()}"); // 추가 디버깅 출력
+                          });
+                          return SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: spaceSnapshot.data!.docs.map((document) {
+                                print("Space document: ${document.data()}"); // 추가 디버깅 출력
+                                return _SpaceContainer(name: document['sname'], sid: document['sid'], userId: userId,);
+                              }).toList(),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(height: 10.0),
                     ElevatedButton(
                       onPressed: () {
+                        SystemChannels.textInput.invokeMethod('TextInput.hide'); // 키보드 닫기
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -137,6 +137,7 @@ class SpaceManagementScreen extends StatelessWidget {
                     SizedBox(height: 5),
                     OutlinedButton(
                       onPressed: () {
+                        SystemChannels.textInput.invokeMethod('TextInput.hide'); // 키보드 닫기
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -164,8 +165,8 @@ class SpaceManagementScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

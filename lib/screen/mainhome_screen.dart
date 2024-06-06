@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easybudget/constant/color.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:easybudget/screen/mypage_screen.dart';
@@ -140,7 +141,7 @@ class _AnnouncementBox extends StatelessWidget {
                                   child: Text(
                                     '닫기',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: blueColor,
                                     ),
                                   ),
                                   onPressed: () {

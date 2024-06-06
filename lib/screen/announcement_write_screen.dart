@@ -1,3 +1,6 @@
+import 'package:easybudget/constant/color.dart';
+import 'package:easybudget/layout/appbar_layout.dart';
+import 'package:easybudget/layout/default_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -26,8 +29,12 @@ class _AnnouncementFormState extends State<AnnouncementForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('공지사항 저장하기')),
+    return DefaultLayout(
+      appbar: AppbarLayout(
+        title: '공지사항 저장하기',
+        back: true,
+        action: [],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -44,6 +51,19 @@ class _AnnouncementFormState extends State<AnnouncementForm> {
             ElevatedButton(
               onPressed: _saveAnnouncement,
               child: Text('공지사항 저장하기'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blueColor,
+                foregroundColor: primaryColor,
+                textStyle: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'NotoSansKR'
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5), // 버튼을 조금 더 각지게 만듦
+                ),
+                padding: EdgeInsets.all(15), // 높이를 5씩 늘림
+              ),
             ),
           ],
         ),
