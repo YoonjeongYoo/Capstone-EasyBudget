@@ -13,8 +13,8 @@ import '../firebase/login_db.dart';
 class MemberManagementScreen extends StatelessWidget {
   //const MemberManagementScreen({super.key});
   final String spaceName;
-
-  const MemberManagementScreen({super.key, required this.spaceName});
+  final String currentUserId;
+  const MemberManagementScreen({super.key, required this.spaceName, required this.currentUserId});
 
   Future<List<Map<String, dynamic>>> fetchMembers() async {
 
@@ -95,7 +95,7 @@ class MemberManagementScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 멤버 관리',
-        action: [],
+        action: [], back: true,
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchMembers(),

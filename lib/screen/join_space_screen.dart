@@ -40,7 +40,7 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 참가하기',
-        action: [],
+        action: [], back: true,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(

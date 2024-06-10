@@ -13,7 +13,7 @@ Future<void> createCategory(String uid, String cname) async {
 
   try {
     // Space 문서 ID를 검색
-    String? spaceId = await searchSpace(uid, sid!);
+    String? spaceId = await searchSpace(sid!);
     if (spaceId != null) {
       // 새로운 카테고리 데이터를 설정
       final data1 = <String, dynamic>{
@@ -40,7 +40,7 @@ Future<void> appendCategory(String uid, String cname) async {
 
   try {
     // Space 문서 ID를 검색
-    String? spaceId = await searchSpace(uid, sid!);
+    String? spaceId = await searchSpace(sid!);
     if (spaceId != null) {
       // 기존 카테고리 목록에 새로운 카테고리 항목 추가
       await space.doc(spaceId).collection('Category')
