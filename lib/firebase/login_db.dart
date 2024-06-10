@@ -103,7 +103,7 @@ Future<String?> changePassword(String pw) async {
     if (udocid!.isEmpty) {
       print('Document could not found!'); // error check
     } else {
-      await db.doc(udocid!).update({'pw': pw}); // set new password as method input
+      await db.doc(udocid!).update({'pw': pw}); // set new password as method input pw
       print(pw);
     }
   } catch (e) {

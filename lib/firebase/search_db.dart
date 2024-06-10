@@ -25,57 +25,66 @@ Future<String?> searchUser(String uid) async {
   return docid;
 }
 
-Future<String?> searchSpace(String sid) async {
+Future<String?> searchSpace(String uid, String sid) async {
   print("searching space...");
   final db = FirebaseFirestore.instance;
-  //late String res = '';
   late String docid = '';
   try {
-
-    await db.collection("Space")
-        .where("sid", isEqualTo: sid)
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        //print(element.id);
-        docid = element.id;
+    var userDoc = await db.collection("User").doc(uid).get();
+    if (userDoc.exists) {
+      List<dynamic> enteredSpaces = userDoc.data()?['entered'] ?? [];
+      if (enteredSpaces.contains(sid)) {
+        var spaceQuery = await db.collection("Space")
+            .where("sid", isEqualTo: sid)
+            .get();
+        for (var element in spaceQuery.docs) {
+          docid = element.id;
+        }
+      } else {
+        print('User is not part of this space.');
       }
-    });
+    }
   } catch (e) {
-    print(e);
+    print('Error in searchSpace: $e');
   } finally {
     print('successfully searched space: $docid!');
   }
   return docid;
 }
 
-Future<String?> searchData() async {
+
+Future<String?> searchData(String uid) async {
   print("searching data...");
   final db = FirebaseFirestore.instance;
   final sid = await getSpaceId();
   late String res = '';
   late String docid = '';
   try {
-    await searchSpace(sid!).then((value) {
-      res = value.toString();
-    });
-
-    await db.collection("Space")
-        .doc(res)
-        .collection('Category')
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        print(element.id);
+    if (sid != null) {
+      final spaceId = await searchSpace(uid, sid);
+      if (spaceId != null) {
+        res = spaceId;
+        final categoryCollection = await db.collection("Space")
+            .doc(res)
+            .collection('Category')
+            .get();
+        for (var element in categoryCollection.docs) {
+          print(element.id);
+        }
+      } else {
+        print('Space ID not found.');
       }
-    });
+    } else {
+      print('Space ID is null.');
+    }
   } catch (e) {
-    print(e);
+    print('Error in searchData: $e');
   } finally {
     print('successfully searched data!');
   }
   return docid;
 }
+
 
 Future<String?> checkUserId(String uid) async {
   print("checking data...");
@@ -106,33 +115,43 @@ Future<String?> checkUserId(String uid) async {
   return docid;
 }
 
-Future<String?> getCateName() async {
+Future<String?> getCateName(String uid) async {
   final db = FirebaseFirestore.instance;
   final sid = await getSpaceId();
   String? cname;
   print("Fetching cname data...");
 
   try {
-    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await db
-        .collection('Space')
-        .doc(await searchSpace(sid!))
-        .collection('Category')
-        .doc('categories')
-        .get();
+    if (sid != null) {
+      final spaceId = await searchSpace(uid, sid);
+      if (spaceId != null) {
+        DocumentSnapshot<Map<String, dynamic>> docSnapshot = await db
+            .collection('Space')
+            .doc(spaceId)
+            .collection('Category')
+            .doc('categories')
+            .get();
 
-    if (docSnapshot.exists) {
-      List<dynamic>? cnameList = docSnapshot.data()?['cname'];
-      if (cnameList != null && cnameList.isNotEmpty) {
-        //print('cname List:');
-        for (cname in cnameList) {
-          //print(cname);
-          if(cname=='event') {break;}
+        if (docSnapshot.exists) {
+          List<dynamic>? cnameList = docSnapshot.data()?['cname'];
+          if (cnameList != null && cnameList.isNotEmpty) {
+            for (var name in cnameList) {
+              if (name == 'event') {
+                cname = name;
+                break;
+              }
+            }
+          } else {
+            print('cname field is empty or does not exist.');
+          }
+        } else {
+          print('Document does not exist.');
         }
       } else {
-        print('cname field is empty or does not exist.');
+        print('Space ID not found.');
       }
     } else {
-      print('Document does not exist.');
+      print('Space ID is null.');
     }
   } catch (e) {
     print('Error fetching cname data: $e');
@@ -170,7 +189,7 @@ Future<void> loginUser(String uid, String password) async {
         final userData = userDoc.data();
         print("User Data: $userData"); // 디버깅 출력 추가
 
-        if (userData != null) {
+        if (userData.isNotEmpty) {
           // 사용자가 참여하고 있는 Space ID 목록 조회
           final uentered = await db.collection('User').doc(udocid).collection('entered').get();
           final ueData = uentered.docs.first.data();
@@ -236,23 +255,36 @@ Future<bool> validateLogin(String uid, String password) async {
 }
 Future<List<String>> getUserSpaces(String userId) async {
   final db = FirebaseFirestore.instance;
-  final userQuery = await db.collection("User").where("uid", isEqualTo: userId).get();
-  if (userQuery.docs.isNotEmpty) {
-    final userQuery = await db.collection('User')
-        .where('uid', isEqualTo: userId)
-        .get();
+  List<String> spaceIds = [];
 
-    final userDoc = userQuery.docs.first;
-    final userData = userDoc.data();
-    print("User Data: $userData"); // 디버깅 출력 추가
-    if (userData.isNotEmpty && userData.containsKey('spaces')) {
-      return List<String>.from(userData['spaces']);
+  try {
+    // 사용자 문서 쿼리
+    final userQuery = await db.collection("User").where("uid", isEqualTo: userId).get();
+
+    if (userQuery.docs.isNotEmpty) {
+      // 첫 번째 문서 가져오기
+      final userDoc = userQuery.docs.first;
+      final userData = userDoc.data();
+
+      print("User Data: $userData"); // 디버깅 출력 추가
+
+      // 'entered' 필드가 있는지 확인하고 List<String>으로 변환
+      if (userData.isNotEmpty && userData.containsKey('entered')) {
+        spaceIds = List<String>.from(userData['entered']);
+        print("Space IDs: $spaceIds"); // 추가 디버깅 출력
+      } else {
+        print("'entered' field does not exist or is not a List in user data.");
+      }
+    } else {
+      print("User document does not exist for userId: $userId"); // 디버깅 출력 추가
     }
-  } else {
-    print("User document does not exist for userId: $userId"); // 디버깅 출력 추가
+  } catch (e) {
+    print("Error fetching user spaces: $e");
   }
-  return [];
+
+  return spaceIds;
 }
+
 
 Future<String?> getSid(String docid) async {
   final db = FirebaseFirestore.instance;

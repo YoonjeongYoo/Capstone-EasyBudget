@@ -79,7 +79,7 @@ class MypageScreen extends StatelessWidget {
             GestureDetector(
               onTap: () async {
                 // 비밀번호 변경 이벤트
-                await changePassword('12345'); // need to make another screen
+                await changePassword('12345'); // need to make changing password screen
               },
               child: _buildMenuItem(context, '비밀번호 변경'),
             ),

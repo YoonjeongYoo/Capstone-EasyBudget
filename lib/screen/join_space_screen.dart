@@ -145,32 +145,43 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                           .get().then((value) async {
                             for(var element in value.docs) {
                               sdocid = element.id;
-                              print(sdocid);
+                              print("Space Document ID: $sdocid");
                             }
                           }); // 사용자가 선택한 스페이스의 문서 아이디 검색
                     final sid = await getSid(sdocid!);
+                    print("Space SID: $sid");
 
+                    // 'User' 컬렉션의 'entered' 필드에 새로 참가한 space의 'sid' 값을 추가
+                    await FirebaseFirestore.instance
+                        .collection('User')
+                        .doc(udocid)
+                        .update({
+                      'entered': FieldValue.arrayUnion([sid])
+                    })
+                        .then((_) {
+                      print("Space SID successfully added to entered array!");
+                    })
+                        .catchError((error) {
+                      print("Failed to add Space SID to entered array: $error");
+                    });
+
+                    // 'Space' 문서의 'Member' 서브 컬렉션에 사용자 정보 추가
                     final data1 = <String, dynamic> {
                       'uid': currentUserid,
                       'authority': 2,
                     }; // 현재 사용자의 아이디, 권한
 
-                    final data2 = <String, dynamic> {
-                      'sid': sid,
-                      'authority': 2,
-                    }; // 사용자가 가입한 스페이스 아이디, 스페이스에서의 권한
-
                     await FirebaseFirestore.instance
                           .collection('Space')
                           .doc(sdocid)
                           .collection('Member')
-                          .add(data1); // data1을 스페이스의 member 서브 컬렉션에 저장
-
-                    await FirebaseFirestore.instance
-                          .collection('User')
-                          .doc(udocid)
-                          .collection('entered')
-                          .add(data2); // data2를 entered 서브컬렉션에 저장
+                          .add(data1) // data1을 스페이스의 member 서브 컬렉션에 저장
+                          .then((_) {
+                            print("User successfully added to Space Member collection!");
+                          })
+                          .catchError((error) {
+                            print("Failed to add user to Space Member collection: $error");
+                          });
 
                     // 뒤로가기 동작 수행
                     Navigator.of(context).pop();
