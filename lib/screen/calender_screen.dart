@@ -6,6 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'budget_detail_screen.dart';
 
 class CalendarPage extends StatefulWidget {
+  final String? spaceName;
+  const CalendarPage({super.key, required this.spaceName});
+
   @override
   _CalendarPageState createState() => _CalendarPageState();
 }
@@ -26,31 +29,39 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Future<void> _fetchExpensesFromFirestore() async {
-    final QuerySnapshot snapshot = await FirebaseFirestore.instance
+    final QuerySnapshot spaceSnapshot = await FirebaseFirestore.instance
         .collection('Space')
-        .doc('KBpkiTfmpsg3ZI5iSpyY')
-        .collection('Receipt')
+        .where('sname', isEqualTo: widget.spaceName)
         .get();
 
-    final Map<DateTime, int> fetchedExpenses = {};
+    if (spaceSnapshot.docs.isNotEmpty) {
+      final DocumentSnapshot spaceDoc = spaceSnapshot.docs.first;
+      final QuerySnapshot receiptSnapshot = await FirebaseFirestore.instance
+          .collection('Space')
+          .doc(spaceDoc.id)
+          .collection('Receipt')
+          .get();
 
-    for (var doc in snapshot.docs) {
-      final data = doc.data() as Map<String, dynamic>;
-      final DateTime date = (data['date'] as Timestamp).toDate();
-      final int cost = data['totalCost'];
+      final Map<DateTime, int> fetchedExpenses = {};
 
-      final dateKey = DateTime(date.year, date.month, date.day);
+      for (var doc in receiptSnapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        final DateTime date = (data['date'] as Timestamp).toDate();
+        final int cost = data['totalCost'];
 
-      if (fetchedExpenses.containsKey(dateKey)) {
-        fetchedExpenses[dateKey] = fetchedExpenses[dateKey]! + cost;
-      } else {
-        fetchedExpenses[dateKey] = cost;
+        final dateKey = DateTime(date.year, date.month, date.day);
+
+        if (fetchedExpenses.containsKey(dateKey)) {
+          fetchedExpenses[dateKey] = fetchedExpenses[dateKey]! + cost;
+        } else {
+          fetchedExpenses[dateKey] = cost;
+        }
       }
-    }
 
-    setState(() {
-      expenses = fetchedExpenses;
-    });
+      setState(() {
+        expenses = fetchedExpenses;
+      });
+    }
   }
 
   int _getExpenseForDay(DateTime day) {
@@ -71,7 +82,8 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return DefaultLayout(
       appbar: AppbarLayout(
-        title: '경기대학교 학생회',
+        title: widget.spaceName ?? 'default name',
+        back: true,
         action: [],
       ),
       body: Padding(

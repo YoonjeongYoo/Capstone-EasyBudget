@@ -1,5 +1,6 @@
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
+import 'package:easybudget/screen/announcement_write_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class SpaceSettingScreen extends StatelessWidget {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 세부 설정',
+        back: true,
         action: [],
       ),
       body: SingleChildScrollView( // 2. SingleChildScrollView 추가
@@ -134,6 +136,10 @@ class SpaceSettingScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AnnouncementForm()),
+                );
                 // 탭 이벤트가 발생했을 때 실행할 코드를 여기에 작성합니다.
                 // 예를 들어, 다른 화면으로 이동하는 등의 동작을 수행할 수 있습니다.
                 print('컨테이너가 탭되었습니다!');

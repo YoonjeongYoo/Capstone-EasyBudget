@@ -131,8 +131,9 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 생성하기',
+        back: true,
         action: [
-          Padding(
+          /*Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
               onPressed: () {
@@ -146,7 +147,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
               icon: Icon(CupertinoIcons.person_crop_circle_fill),
               iconSize: 30,
             ),
-          ),
+          ),*/
         ],
       ),
       body: Padding(
@@ -188,10 +189,7 @@ class _CreateSpaceScreenState extends State<CreateSpaceScreen> {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: _checkDuplicate,
-                      // {
-                      //   // 중복 확인 로직 추가
-                      // },
+                      onPressed: _checkDuplicate, // 중복확인 로직
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Color.fromRGBO(0, 88, 246, 1),
