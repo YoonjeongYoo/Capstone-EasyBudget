@@ -235,7 +235,7 @@ class _ScanDialogState extends State<ScanDialog> {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://192.168.183.168:5000/process_image'),
+      Uri.parse('http://192.168.241.168:5000/process_image'),
     );
     request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
 

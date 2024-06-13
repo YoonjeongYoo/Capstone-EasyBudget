@@ -133,7 +133,7 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
                         uid: member['uid'] ?? 'Unknown',
                         sid: member['sid'] ?? 'Unknown',
                         authority: member['authority'] ?? 0,
-                        profile: 'asset/img/profile_img_1.png',
+                        profile: 'asset/img/profile_img_2.png',
                         currentUserAuthority: currentUserAuthority,
                         onRemove: () {
                           setState(() {
