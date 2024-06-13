@@ -4,6 +4,8 @@ import 'package:easybudget/screen/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../firebase/login_db.dart';
+
 class MypageScreen extends StatelessWidget {
   final String userId; // userId를 받기 위한 변수 추가
 
@@ -75,8 +77,9 @@ class MypageScreen extends StatelessWidget {
               child: _buildMenuItem(context, '사용자 이름 변경'),
             ),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 // 비밀번호 변경 이벤트
+                await changePassword('12345'); // need to make changing password screen
               },
               child: _buildMenuItem(context, '비밀번호 변경'),
             ),

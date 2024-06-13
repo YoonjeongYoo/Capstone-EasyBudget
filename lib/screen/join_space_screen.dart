@@ -3,7 +3,6 @@ import 'package:easybudget/firebase/login_db.dart';
 import 'package:easybudget/firebase/search_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
-import 'package:easybudget/screen/space_management_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,8 +40,7 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
     return DefaultLayout(
       appbar: AppbarLayout(
         title: '스페이스 참가하기',
-        back: true,
-        action: [],
+        action: [], back: true,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -128,35 +126,28 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                       ? null
                       : () async {
                     final currentUserid = await getUserId(); // 현재 로그인된 사용자 아이디
-                    if (currentUserid == null) {
-                      // currentUserid가 null인 경우 예외 처리
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('사용자 아이디를 가져오는 데 실패했습니다. 다시 시도해 주세요.'))
-                      );
-                      return;
-                    }
-
                     String? udocid = '';
 
                     await FirebaseFirestore.instance
-                        .collection('User')
-                        .where('uid', isEqualTo: currentUserid)
-                        .get().then((value) {
-                      for(var element in value.docs) {
-                        udocid = element.id;
-                      }
-                    }); // 현재 사용자의 문서 아이디 검색
+                          .collection('User')
+                          .where('uid', isEqualTo: currentUserid)
+                          .get().then((value) {
+                            for(var element in value.docs) {
+                              udocid = element.id;
+                            }
+                          }); // 현재 사용자의 문서 아이디 검색
+
 
                     String? sdocid = '';
                     await FirebaseFirestore.instance
-                        .collection('Space')
-                        .where('sname', isEqualTo: _selectedSpaceName)
-                        .get().then((value) async {
-                      for(var element in value.docs) {
-                        sdocid = element.id;
-                        print("Space Document ID: $sdocid");
-                      }
-                    }); // 사용자가 선택한 스페이스의 문서 아이디 검색
+                          .collection('Space')
+                          .where('sname', isEqualTo: _selectedSpaceName)
+                          .get().then((value) async {
+                            for(var element in value.docs) {
+                              sdocid = element.id;
+                              print("Space Document ID: $sdocid");
+                            }
+                          }); // 사용자가 선택한 스페이스의 문서 아이디 검색
                     final sid = await getSid(sdocid!);
                     print("Space SID: $sid");
 
@@ -181,24 +172,19 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                     }; // 현재 사용자의 아이디, 권한
 
                     await FirebaseFirestore.instance
-                        .collection('Space')
-                        .doc(sdocid)
-                        .collection('Member')
-                        .add(data1) // data1을 스페이스의 member 서브 컬렉션에 저장
-                        .then((_) {
-                      print("User successfully added to Space Member collection!");
-                    })
-                        .catchError((error) {
-                      print("Failed to add user to Space Member collection: $error");
-                    });
+                          .collection('Space')
+                          .doc(sdocid)
+                          .collection('Member')
+                          .add(data1) // data1을 스페이스의 member 서브 컬렉션에 저장
+                          .then((_) {
+                            print("User successfully added to Space Member collection!");
+                          })
+                          .catchError((error) {
+                            print("Failed to add user to Space Member collection: $error");
+                          });
 
                     // 뒤로가기 동작 수행
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SpaceManagementScreen(userId: currentUserid), // 수정
-                      ),
-                    );
+                    Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: blueColor,
