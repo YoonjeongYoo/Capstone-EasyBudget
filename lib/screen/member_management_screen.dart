@@ -109,19 +109,40 @@ class MemberManagementScreen extends StatelessWidget {
           }
 
           final members = snapshot.data!;
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                for (var member in members)
-                  _MemberContainer(
-                    name: member['uname'],
-                    uid: member['uid'],
-                    sid: '11aa',
-                    authority: 3,
-                    profile: 'asset/img/profile_img_1.png',
-                  ),
-                Divider(
-                  color: Color(0xffe9ecef),
+          final spaceId = members.isNotEmpty ? members.first['sid'] : '';
+
+          return FutureBuilder<int>(
+            future: fetchCurrentUserAuthority(spaceId),
+            builder: (context, authoritySnapshot) {
+              if (authoritySnapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (authoritySnapshot.hasError) {
+                return Center(child: Text('Error: ${authoritySnapshot.error}'));
+              }
+
+              final currentUserAuthority = authoritySnapshot.data ?? 0;
+
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for (var member in members)
+                      _MemberContainer(
+                        name: member['uname'] ?? 'Unknown',
+                        uid: member['uid'] ?? 'Unknown',
+                        sid: member['sid'] ?? 'Unknown',
+                        authority: member['authority'] ?? 0,
+                        profile: 'asset/img/profile_img_2.png',
+                        currentUserAuthority: currentUserAuthority,
+                        onRemove: () {
+                          setState(() {
+                            members.remove(member);
+                          });
+                        },
+                      ),
+                    Divider(
+                      color: Color(0xffe9ecef),
+                    ),
+                  ],
                 ),
                 // Add other notification widgets
               ],
