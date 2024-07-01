@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easybudget/firebase/login_db.dart';
 import 'package:easybudget/layout/appbar_layout.dart';
 import 'package:easybudget/layout/default_layout.dart';
 import 'package:easybudget/screen/announcement_write_screen.dart';
@@ -195,8 +197,24 @@ class _MyToggleState extends State<MyToggle> {
     return CupertinoSwitch(
       value: _switchValue,
       onChanged: (value) {
-        setState(() {
+        setState(() async {
           _switchValue = value;
+          final sid = await getSpaceId();
+          String? sdocid = '';
+          final db = await FirebaseFirestore.instance.collection('Space');
+          await db.where('sid', isEqualTo: sid)
+                .get()
+                .then((value) {
+                  for (var element in value.docs) {
+                    sdocid = element.id;
+                  }
+                });
+
+          await db.doc(sdocid)
+              .update({'approvalRequired': _switchValue}); // _switchValue 에 저장된 값(true, false)을 저장
+
+          DocumentSnapshot<Map<String, dynamic>> docSnapshot = await db.doc(sdocid).get();
+          print(docSnapshot.data()?['approvalRequired']); // 현재 스페이스의 'approvalRequired'의 값을 콘솔에 출력
         });
       },
     );
