@@ -112,6 +112,7 @@ class MemberManagementScreen extends StatelessWidget {
           final spaceId = members.isNotEmpty ? members.first['sid'] : '';
 
           return FutureBuilder<int>(
+            // Error occurred: Line 115, 135-137
             future: fetchCurrentUserAuthority(spaceId),
             builder: (context, authoritySnapshot) {
               if (authoritySnapshot.connectionState == ConnectionState.waiting) {
